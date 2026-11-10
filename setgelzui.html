@@ -275,10 +275,9 @@
                 </button>
             </div>
             <div class="flex items-center gap-4 theme-text-secondary">
-                <span>СЭМҮТ-ийн 24 цагийн утас: <strong class="text-current">1800-2000</strong></span>
-                <button onclick="toggleVSCodeModal(true)" class="hover:underline font-semibold flex items-center gap-1" style="color: var(--accent-primary);">
-                    <i data-lucide="code-2" class="w-3.5 h-3.5"></i> VS Code Заавар
-                </button>
+                <span>СЭМҮТ-ийн 24 цагийн зөвлөгөө: <strong class="text-current">1800-0119</strong></span>
+                <span class="opacity-40">|</span>
+                <span>Хүүхдийн тусламж: <strong class="text-current">108</strong></span>
             </div>
         </div>
 
@@ -953,7 +952,7 @@
                 <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Дасгал #4 • Танин Мэдэхүйн Сэтгэл Засал (CBT)</span>
                 <h3 class="font-serif-display text-2xl sm:text-3xl font-bold mt-2">Сөрөг Бодлыг Тэнцвэртэй Бодлоор Солих Хүснэгт</h3>
                 <p class="text-sm theme-text-secondary mt-2 max-w-3xl">
-                    Танин мэдэхүйн сэтгэл засалд (Cognitive Behavioral Therapy) биднийг үйл явдал өөрөө биш, харин тухайн үйл явдалд өгч буй бидний тайлбар л шаналгадаг гэж үздэг. Жишээнүүд дээр дарж эсвэл өөрийн бодлоо бичиж хувиргана уу.
+                    Танин мэдэхүйн сэтгэл засалд (Cognitive Behavioral Therapy) биднийг үйл явдал өөрөө биш, харин тухайн үйл явдалд өгч буй бидний тайлбар л шаналгадаг гэж үздэг. Жишээнүүд дээр дарж эсвэл өөрийн бодлоо бичиж хувиргаад хадгалаарай.
                 </p>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -962,8 +961,14 @@
                         <textarea id="cbt-negative" rows="3" class="w-full bg-transparent text-sm focus:outline-none resize-none">Би энэ илтгэл дээр гацчихвал бүгд намайг чадваргүй гэж бодно.</textarea>
                     </div>
                     <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-                        <label class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block mb-2">2. Бодит баримт ба Нотлох зүйл</label>
-                        <textarea id="cbt-evidence" rows="3" class="w-full bg-transparent text-sm focus:outline-none resize-none">Хүн бүр л сандардаг. Өмнө нь би хэд хэдэн удаа амжилттай танилцуулга хийж байсан.</textarea>
+                        <label class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block mb-2">2. Танин мэдэхүйн гажуудал & Баримт</label>
+                        <select id="cbt-distortion" class="w-full mb-2 p-1.5 rounded-lg bg-black/5 border border-current/15 text-xs font-semibold focus:outline-none">
+                            <option value="Хэт ерөнхийлөх (Overgeneralization)">Гажуудал: Хэт ерөнхийлөх</option>
+                            <option value="Хар ба Цагаан сэтгэлгээ (All-or-Nothing)">Гажуудал: Хар ба Цагаан сэтгэлгээ</option>
+                            <option value="Оюун санаа унших (Mind Reading)">Гажуудал: Бусдын бодлыг таах</option>
+                            <option value="Хамгийн муугаар бодох (Catastrophizing)">Гажуудал: Хамгийн муугаар бодох</option>
+                        </select>
+                        <textarea id="cbt-evidence" rows="2" class="w-full bg-transparent text-sm focus:outline-none resize-none">Хүн бүр л сандардаг. Өмнө нь би хэд хэдэн удаа амжилттай танилцуулга хийж байсан.</textarea>
                     </div>
                     <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
                         <label class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-2">3. Эрүүл, тэнцвэртэй шинэ бодол</label>
@@ -978,7 +983,19 @@
                         <button onclick="loadCBTExample(1)" class="px-3 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 text-xs font-medium">Найзын хариу</button>
                         <button onclick="loadCBTExample(2)" class="px-3 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 text-xs font-medium">Ирээдүйн айдас</button>
                     </div>
-                    <span id="cbt-saved-toast" class="text-xs font-bold text-emerald-500 hidden">✓ Тархины шинэ холбоос идэвхэжлээ!</span>
+                    <div class="flex items-center gap-3">
+                        <span id="cbt-saved-toast" class="text-xs font-bold text-emerald-500 hidden">✓ Тархины шинэ холбоос хадгалагдлаа!</span>
+                        <button onclick="saveCBTEntry()" class="theme-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Тэмдэглэлд хадгалах</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Saved CBT Reframed Thoughts Log -->
+                <div id="cbt-log-container" class="mt-6 pt-5 border-t border-current/10 space-y-3 hidden">
+                    <h4 class="text-xs font-bold uppercase tracking-wider opacity-75">Миний шинэчилсэн бодлын тэмдэглэлүүд:</h4>
+                    <div id="cbt-log-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                 </div>
             </div>
         </div>
@@ -1154,7 +1171,7 @@
                     <p class="font-bold flex items-center gap-1.5" style="color: var(--accent-primary);">
                         <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> Сэтгэл зүйн тусламжийн утас:
                     </p>
-                    <p class="theme-text-secondary">СЭМҮТ: <strong>1800-2000</strong> (24 цаг) • Хүүхдийн тусламж: <strong>108</strong></p>
+                    <p class="theme-text-secondary">СЭМҮТ: <strong>1800-0119</strong> (24 цаг) • Хүүхдийн тусламж: <strong>108</strong></p>
                 </div>
             </div>
 
@@ -1200,7 +1217,6 @@
         <div class="max-w-7xl mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs theme-text-secondary">
             <p>© 2026 MindCare Mongolia. Хүн төвтэй сэтгэл судлалын дижитал платформ.</p>
             <div class="flex items-center gap-4">
-                <button onclick="toggleVSCodeModal(true)" class="hover:underline">VS Code заавар</button>
                 <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-3.5 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 font-semibold flex items-center gap-1 text-current">
                     <span>Дээш буцах</span>
                     <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
@@ -1316,34 +1332,6 @@
                 <h4 class="text-lg font-bold">Захиалга амжилттай бүртгэгдлээ!</h4>
                 <p class="text-xs theme-text-secondary">Сэтгэл зүйн төвийн зөвлөх тантай удахгүй холбогдож цагийг баталгаажуулна.</p>
                 <button onclick="closeBookingModal()" class="theme-btn-primary px-6 py-2.5 rounded-xl text-xs font-bold mt-2">Хаах</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========================================================
-         MODAL 4: VS CODE SETUP INSTRUCTIONS
-         ========================================================= -->
-    <div id="vscode-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="modal-window glass-card-strong rounded-3xl max-w-xl w-full p-6 sm:p-8 relative">
-            <button onclick="toggleVSCodeModal(false)" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-black/10 flex items-center justify-center">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-xl theme-btn-primary flex items-center justify-center">
-                    <i data-lucide="code-2" class="w-5 h-5 text-white"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-xl">VS Code дээр хэрхэн ажиллуулах вэ?</h3>
-                    <p class="text-xs theme-text-secondary">Бүх код 1 файл дотор багтсан тул шууд ажиллана</p>
-                </div>
-            </div>
-            <ol class="space-y-3 text-sm theme-text-secondary leading-relaxed list-decimal pl-5">
-                <li>VS Code дээрээ <code class="px-2 py-0.5 rounded bg-black/10 font-mono text-xs">index.html</code> файл үүсгэж энэ кодыг бүтнээр нь хуулж тавина.</li>
-                <li><kbd class="px-1.5 py-0.5 rounded bg-black/10 text-xs">Ctrl + S</kbd> дарж хадгалаад <strong>Live Server (Go Live)</strong> эсвэл файл дээрээ 2 товшоод браузер дээрээ нээнэ.</li>
-                <li>Header дээрх цэснүүд дээр дарахад хуудас солигдож, сэдэв бүр дээр дарахад тусгай цонх (Modal) нээгдэнэ.</li>
-            </ol>
-            <div class="mt-6 text-right">
-                <button onclick="toggleVSCodeModal(false)" class="theme-btn-primary px-6 py-2.5 rounded-xl text-xs font-bold">Ойлголоо</button>
             </div>
         </div>
     </div>
@@ -1953,6 +1941,30 @@
             setTimeout(() => toast.classList.add('hidden'), 2500);
         }
 
+        function saveCBTEntry() {
+            const neg = document.getElementById('cbt-negative').value.trim();
+            const dist = document.getElementById('cbt-distortion').value;
+            const bal = document.getElementById('cbt-balanced').value.trim();
+            if (!neg || !bal) return;
+
+            const container = document.getElementById('cbt-log-container');
+            const list = document.getElementById('cbt-log-list');
+            container.classList.remove('hidden');
+
+            const card = document.createElement('div');
+            card.className = 'p-4 rounded-2xl bg-black/5 border border-current/10 text-xs space-y-1.5';
+            card.innerHTML = `
+                <span class="theme-badge px-2.5 py-0.5 rounded-full font-bold inline-block">${dist}</span>
+                <p class="line-through opacity-60">${neg}</p>
+                <p class="font-semibold text-emerald-600 dark:text-emerald-400">→ ${bal}</p>
+            `;
+            list.prepend(card);
+
+            const toast = document.getElementById('cbt-saved-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
         // Worry Release & Affirmations
         function releaseWorry() {
             const input = document.getElementById('worry-input');
@@ -2064,12 +2076,6 @@
             document.getElementById('booking-form-box').classList.add('hidden');
             document.getElementById('booking-success-box').classList.remove('hidden');
             lucide.createIcons();
-        }
-
-        function toggleVSCodeModal(show) {
-            const modal = document.getElementById('vscode-modal');
-            if (show) modal.classList.add('open');
-            else modal.classList.remove('open');
         }
 
         function subscribeNewsletter() {
