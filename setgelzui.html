@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="mn" class="scroll-smooth" data-theme="ocean">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare Mongolia | Сэтгэл Судлалын Цогц Платформ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Playfair Display (supports Mongolian Cyrillic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* =========================================================
+           4 PSYCHOLOGICAL DYNAMIC THEMES (OCEAN, FOREST, NIGHT, SUNSET)
+           ========================================================= */
+        :root, [data-theme="ocean"] {
+            --bg-primary: #eef6f8;
+            --bg-secondary: #ffffff;
+            --bg-glass: rgba(255, 255, 255, 0.80);
+            --bg-glass-strong: rgba(255, 255, 255, 0.94);
+            --text-primary: #0d2535;
+            --text-secondary: #486578;
+            --accent-primary: #0d9488;
+            --accent-secondary: #0284c7;
+            --accent-soft: rgba(13, 148, 136, 0.12);
+            --border-color: rgba(13, 148, 136, 0.18);
+            --orb-1: rgba(20, 184, 166, 0.32);
+            --orb-2: rgba(56, 189, 248, 0.28);
+            --orb-3: rgba(110, 231, 183, 0.28);
+            --particle-color: rgba(13, 148, 136, 0.45);
+            --card-shadow: 0 20px 45px -15px rgba(13, 37, 53, 0.08);
+        }
+
+        [data-theme="forest"] {
+            --bg-primary: #f3f6ef;
+            --bg-secondary: #ffffff;
+            --bg-glass: rgba(251, 253, 248, 0.82);
+            --bg-glass-strong: rgba(252, 254, 250, 0.95);
+            --text-primary: #1a2e22;
+            --text-secondary: #4e6356;
+            --accent-primary: #2f6f3e;
+            --accent-secondary: #65a30d;
+            --accent-soft: rgba(47, 111, 62, 0.12);
+            --border-color: rgba(47, 111, 62, 0.18);
+            --orb-1: rgba(101, 163, 13, 0.28);
+            --orb-2: rgba(52, 211, 153, 0.24);
+            --orb-3: rgba(250, 204, 21, 0.20);
+            --particle-color: rgba(47, 111, 62, 0.45);
+            --card-shadow: 0 20px 45px -15px rgba(26, 46, 34, 0.08);
+        }
+
+        [data-theme="night"] {
+            --bg-primary: #090e1a;
+            --bg-secondary: #131c31;
+            --bg-glass: rgba(19, 28, 49, 0.80);
+            --bg-glass-strong: rgba(15, 23, 42, 0.96);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-primary: #818cf8;
+            --accent-secondary: #c084fc;
+            --accent-soft: rgba(129, 140, 248, 0.16);
+            --border-color: rgba(129, 140, 248, 0.24);
+            --orb-1: rgba(99, 102, 241, 0.28);
+            --orb-2: rgba(168, 85, 247, 0.24);
+            --orb-3: rgba(56, 189, 248, 0.20);
+            --particle-color: rgba(165, 180, 252, 0.65);
+            --card-shadow: 0 22px 50px -12px rgba(0, 0, 0, 0.55);
+        }
+
+        [data-theme="sunset"] {
+            --bg-primary: #fdf6f0;
+            --bg-secondary: #ffffff;
+            --bg-glass: rgba(255, 251, 247, 0.82);
+            --bg-glass-strong: rgba(255, 252, 249, 0.95);
+            --text-primary: #331b14;
+            --text-secondary: #755146;
+            --accent-primary: #ea580c;
+            --accent-secondary: #db2777;
+            --accent-soft: rgba(234, 88, 12, 0.12);
+            --border-color: rgba(234, 88, 12, 0.18);
+            --orb-1: rgba(251, 146, 60, 0.30);
+            --orb-2: rgba(244, 114, 182, 0.25);
+            --orb-3: rgba(253, 224, 71, 0.25);
+            --particle-color: rgba(234, 88, 12, 0.45);
+            --card-shadow: 0 20px 45px -15px rgba(51, 27, 20, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-x: hidden;
+        }
+
+        .font-serif-display {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+
+        /* Ambient Interactive Canvas Background */
+        #ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Surfaces */
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.4s ease;
+        }
+
+        .glass-card-strong {
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent-primary);
+        }
+
+        .theme-text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .theme-btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #ffffff;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .theme-btn-primary:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 14px 28px -8px var(--accent-primary);
+            filter: brightness(1.06);
+        }
+
+        .theme-badge {
+            background-color: var(--accent-soft);
+            color: var(--accent-primary);
+        }
+
+        /* SPA View Transition Animations */
+        .page-view {
+            display: none;
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .page-view.active-view {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: viewEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes viewEnter {
+            0% { opacity: 0; transform: translateY(22px) scale(0.99); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Mega Menu Dropdown Animation */
+        .mega-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-group:hover .mega-menu,
+        .mega-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Active Navigation Indicator */
+        .nav-tab {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .nav-tab.active-tab {
+            color: var(--accent-primary);
+            background-color: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        /* Modal Window Scale & Fade Animation */
+        .modal-backdrop {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        .modal-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-window {
+            transform: scale(0.93) translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+        }
+        .modal-backdrop.open .modal-window {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* Floating Hero Animation */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        .animate-float {
+            animation: floatSlow 6s ease-in-out infinite;
+        }
+
+        /* Worry Release Dissolve Animation */
+        @keyframes floatAway {
+            0% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
+            100% { opacity: 0; transform: scale(0.75) translateY(-110px); filter: blur(10px); }
+        }
+        .release-anim {
+            animation: floatAway 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 9999px; }
+    </style>
+</head>
+<body class="antialiased selection:bg-teal-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <!-- =========================================================
+         DYNAMIC INTERACTIVE CANVAS BACKGROUND (PARTICLES + ORBS)
+         ========================================================= -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- =========================================================
+         RICH STICKY HEADER WITH MEGA-MENU & SPA VIEW SWITCHING
+         ========================================================= -->
+    <header class="fixed top-0 left-0 right-0 z-40 px-3 sm:px-6 py-3">
+        <!-- Top Crisis & Quick Info Bar -->
+        <div class="max-w-7xl mx-auto mb-2 px-4 py-1.5 rounded-xl glass-card hidden md:flex items-center justify-between text-xs">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    Сэтгэл зүйн боловсрол ба өөрийгөө таних дижитал орчин
+                </span>
+                <span class="opacity-40">|</span>
+                <button onclick="openReadingModal('neuroplasticity')" class="hover:underline flex items-center gap-1" style="color: var(--accent-primary);">
+                    <i data-lucide="Flame" class="w-3.5 h-3.5"></i>
+                    <span>Өнөөдрийн онцлох: Тархины уян хатан чанар (Neuroplasticity)</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-4 theme-text-secondary">
+                <span>СЭМҮТ-ийн 24 цагийн утас: <strong class="text-current">1800-2000</strong></span>
+                <button onclick="toggleVSCodeModal(true)" class="hover:underline font-semibold flex items-center gap-1" style="color: var(--accent-primary);">
+                    <i data-lucide="code-2" class="w-3.5 h-3.5"></i> VS Code Заавар
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Navigation Bar -->
+        <nav class="max-w-7xl mx-auto glass-card-strong rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between gap-2 relative">
+            <!-- Brand Logo -->
+            <button onclick="switchView('home')" class="flex items-center gap-3 text-left group shrink-0">
+                <div class="w-10 h-10 rounded-xl theme-btn-primary flex items-center justify-center shadow-md group-hover:rotate-6 transition-transform">
+                    <i data-lucide="brain-circuit" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-none">MindCare</span>
+                    <span class="text-[11px] theme-text-secondary block mt-0.5">Сэтгэл Судлалын Платформ</span>
+                </div>
+            </button>
+
+            <!-- Desktop Multi-Option Navigation with Mega-Dropdown -->
+            <div class="hidden xl:flex items-center gap-1 text-sm">
+                <button onclick="switchView('home')" id="nav-home" class="nav-tab active-tab px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span>Нүүр</span>
+                </button>
+
+                <!-- Mega Dropdown 1: Сэтгэл судлалын салбарууд -->
+                <div class="relative nav-group">
+                    <button onclick="switchView('branches')" id="nav-branches" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+                        <i data-lucide="compass" class="w-4 h-4"></i>
+                        <span>Салбар мэдлэг</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60"></i>
+                    </button>
+                    <!-- Mega Menu Popup Window -->
+                    <div class="mega-menu absolute left-0 top-full pt-3 w-[640px] z-50">
+                        <div class="glass-card-strong rounded-3xl p-5 grid grid-cols-2 gap-3 shadow-2xl border border-current/15">
+                            <div class="col-span-2 pb-2 mb-1 border-b border-current/10 flex items-center justify-between">
+                                <span class="text-xs font-bold uppercase tracking-wider opacity-70">Сэдэв дээр дарж тусгай цонхоор уншина уу</span>
+                                <button onclick="switchView('branches')" class="text-xs font-semibold hover:underline" style="color: var(--accent-primary);">Бүх 9 салбарыг харах →</button>
+                            </div>
+                            <button onclick="openConceptModal('anxiety')" class="p-3 rounded-2xl hover:bg-black/5 text-left flex items-start gap-3 transition">
+                                <div class="w-9 h-9 rounded-xl theme-badge flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="waves" class="w-4 h-4"></i></div>
+                                <div>
+                                    <p class="font-bold text-xs">Сэтгэл түгшилт ба Айдас</p>
+                                    <p class="text-[11px] theme-text-secondary line-clamp-1">Хэт их бодох, паник болон тархины дохиолол</p>
+                                </div>
+                            </button>
+                            <button onclick="openConceptModal('attachment')" class="p-3 rounded-2xl hover:bg-black/5 text-left flex items-start gap-3 transition">
+                                <div class="w-9 h-9 rounded-xl theme-badge flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="heart-handshake" class="w-4 h-4"></i></div>
+                                <div>
+                                    <p class="font-bold text-xs">Ээнэгшихүйн онол (Attachment)</p>
+                                    <p class="text-[11px] theme-text-secondary line-clamp-1">Хайр дурлал ба харилцааны 4 хэв маяг</p>
+                                </div>
+                            </button>
+                            <button onclick="openConceptModal('innerchild')" class="p-3 rounded-2xl hover:bg-black/5 text-left flex items-start gap-3 transition">
+                                <div class="w-9 h-9 rounded-xl theme-badge flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="baby" class="w-4 h-4"></i></div>
+                                <div>
+                                    <p class="font-bold text-xs">Дотоод хүүхэд ба Травма</p>
+                                    <p class="text-[11px] theme-text-secondary line-clamp-1">Бага насны шархыг ойлгож эдгээх нь</p>
+                                </div>
+                            </button>
+                            <button onclick="openConceptModal('jung')" class="p-3 rounded-2xl hover:bg-black/5 text-left flex items-start gap-3 transition">
+                                <div class="w-9 h-9 rounded-xl theme-badge flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="moon" class="w-4 h-4"></i></div>
+                                <div>
+                                    <p class="font-bold text-xs">Карл Юнг: Сүүдэр би (Shadow Work)</p>
+                                    <p class="text-[11px] theme-text-secondary line-clamp-1">Ухамсаргүй сэтгэл ба өөрийгөө бүрэн хүлээн зөвшөөрөх</p>
+                                </div>
+                            </button>
+                            <button onclick="openConceptModal('burnout')" class="p-3 rounded-2xl hover:bg-black/5 text-left flex items-start gap-3 transition">
+                                <div class="w-9 h-9 rounded-xl theme-badge flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="battery-low" class="w-4 h-4"></i></div>
+                                <div>
+                                    <p class="font-bold text-xs">Сэтгэлийн туйлдал (Burnout)</p>
+                                    <p class="text-[11px] theme-text-secondary line-clamp-1">Ажлын ачаалал ба мэдрэлийн ядаргаа</p>
+                                </div>
+                            </button>
+                            <button onclick="openConceptModal('cbt')" class="p-3 rounded-2xl hover:bg-black/5 text-left flex items-start gap-3 transition">
+                                <div class="w-9 h-9 rounded-xl theme-badge flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="cpu" class="w-4 h-4"></i></div>
+                                <div>
+                                    <p class="font-bold text-xs">Танин мэдэхүйн засал (CBT)</p>
+                                    <p class="text-[11px] theme-text-secondary line-clamp-1">Сөрөг бодлын гажуудлыг засах шинжлэх ухаан</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tab 3: Сорилууд -->
+                <button onclick="switchView('tests')" id="nav-tests" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+                    <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+                    <span>Сорил & Сонжоо</span>
+                </button>
+
+                <!-- Navigation Tab 4: Тайвшрах Лаборатори -->
+                <button onclick="switchView('lab')" id="nav-lab" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Тайвшрах Лаб</span>
+                </button>
+
+                <!-- Navigation Tab 5: Номын сан & Кейсүүд -->
+                <button onclick="switchView('library')" id="nav-library" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>Кейс & Номын сан</span>
+                </button>
+
+                <!-- Navigation Tab 6: Зөвлөгөө -->
+                <button onclick="switchView('counseling')" id="nav-counseling" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+                    <i data-lucide="calendar-heart" class="w-4 h-4"></i>
+                    <span>Сэтгэл зүйчид</span>
+                </button>
+            </div>
+
+            <!-- Right Controls: 4 Animated Theme Switcher + Mobile Menu Toggle -->
+            <div class="flex items-center gap-2">
+                <div class="flex items-center bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-current/10" title="Хөдөлгөөнт өнгөний орчин солих">
+                    <button onclick="setTheme('ocean')" id="theme-btn-ocean" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all bg-white shadow-sm text-slate-900">
+                        <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                        <span class="hidden sm:inline">Далай</span>
+                    </button>
+                    <button onclick="setTheme('forest')" id="theme-btn-forest" class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all opacity-70 hover:opacity-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-lime-600"></span>
+                        <span class="hidden sm:inline">Ой</span>
+                    </button>
+                    <button onclick="setTheme('night')" id="theme-btn-night" class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all opacity-70 hover:opacity-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        <span class="hidden sm:inline">Шөнө</span>
+                    </button>
+                    <button onclick="setTheme('sunset')" id="theme-btn-sunset" class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all opacity-70 hover:opacity-100">
+                        <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+                        <span class="hidden sm:inline">Нар</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button onclick="toggleMobileMenu()" class="xl:hidden p-2.5 rounded-xl glass-card">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Dropdown Drawer -->
+        <div id="mobile-menu" class="hidden xl:hidden max-w-7xl mx-auto mt-2 glass-card-strong rounded-2xl p-4 space-y-2 shadow-2xl">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <button onclick="switchView('home'); toggleMobileMenu();" class="p-3 rounded-xl bg-black/5 text-left text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="home" class="w-4 h-4" style="color: var(--accent-primary);"></i> Нүүр хуудас
+                </button>
+                <button onclick="switchView('branches'); toggleMobileMenu();" class="p-3 rounded-xl bg-black/5 text-left text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="compass" class="w-4 h-4" style="color: var(--accent-primary);"></i> Салбар мэдлэг (9)
+                </button>
+                <button onclick="switchView('tests'); toggleMobileMenu();" class="p-3 rounded-xl bg-black/5 text-left text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="clipboard-check" class="w-4 h-4" style="color: var(--accent-primary);"></i> Сэтгэл зүйн сорил
+                </button>
+                <button onclick="switchView('lab'); toggleMobileMenu();" class="p-3 rounded-xl bg-black/5 text-left text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4" style="color: var(--accent-primary);"></i> Тайвшрах Лаб
+                </button>
+                <button onclick="switchView('library'); toggleMobileMenu();" class="p-3 rounded-xl bg-black/5 text-left text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-4 h-4" style="color: var(--accent-primary);"></i> Кейс & Номын сан
+                </button>
+                <button onclick="switchView('counseling'); toggleMobileMenu();" class="p-3 rounded-xl bg-black/5 text-left text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="calendar-heart" class="w-4 h-4" style="color: var(--accent-primary);"></i> Сэтгэл зүйчид
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- =========================================================
+         MAIN SPA CONTENT CONTAINER (6 DYNAMIC VIEWS)
+         ========================================================= -->
+    <main class="pt-28 md:pt-36 pb-16 px-4 sm:px-8 max-w-7xl mx-auto w-full flex-grow">
+
+        <!-- =====================================================
+             VIEW 1: НҮҮР ХУУДАС (HOME OVERVIEW & DASHBOARD)
+             ===================================================== -->
+        <div id="view-home" class="page-view active-view space-y-20">
+            
+            <!-- Hero Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full theme-badge text-xs font-semibold tracking-wide">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>ХҮН ТӨВТЭЙ СЭТГЭЛ СУДЛАЛЫН ИНТЕРАКТИВ ОРЧИН</span>
+                    </div>
+
+                    <h1 class="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                        Бодол бүрээ анзаарч, <br>
+                        <span class="italic font-normal" style="color: var(--accent-primary);">дотоод хүчээ</span> нээх аялал.
+                    </h1>
+
+                    <p class="text-base sm:text-lg theme-text-secondary leading-relaxed max-w-2xl">
+                        Сэтгэл судлал бол зөвхөн онол биш — энэ бол та өөрийнхөө баяр гуниг, харилцааны хэв маяг, багын дурсамж болон тархины зуршлаа ойлгож, өөртэйгөө эвлэрэх урлаг юм. Дээд цэснээс хүссэн салбар болон лабораторио сонгон аялаарай.
+                    </p>
+
+                    <!-- Interactive Quick Mood Check Bar -->
+                    <div class="glass-card p-5 rounded-3xl max-w-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-xs font-bold uppercase tracking-wider theme-text-secondary flex items-center gap-1.5">
+                                <i data-lucide="heart-pulse" class="w-4 h-4" style="color: var(--accent-primary);"></i>
+                                Яг энэ мөчид таны сэтгэл ямар өнгөтэй байна вэ?
+                            </p>
+                            <span class="text-[11px] opacity-60">Дарж зөвлөмж авна уу</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                            <button onclick="selectQuickMood('peaceful')" class="p-2.5 rounded-2xl border border-transparent hover:border-current/20 bg-black/5 hover:scale-105 transition text-center">
+                                <span class="text-2xl block">🌿</span>
+                                <span class="text-xs font-semibold mt-1 block">Тайван</span>
+                            </button>
+                            <button onclick="selectQuickMood('anxious')" class="p-2.5 rounded-2xl border border-transparent hover:border-current/20 bg-black/5 hover:scale-105 transition text-center">
+                                <span class="text-2xl block">🌊</span>
+                                <span class="text-xs font-semibold mt-1 block">Түгшүүртэй</span>
+                            </button>
+                            <button onclick="selectQuickMood('tired')" class="p-2.5 rounded-2xl border border-transparent hover:border-current/20 bg-black/5 hover:scale-105 transition text-center">
+                                <span class="text-2xl block">🌧️</span>
+                                <span class="text-xs font-semibold mt-1 block">Ядарсан</span>
+                            </button>
+                            <button onclick="selectQuickMood('lonely')" class="p-2.5 rounded-2xl border border-transparent hover:border-current/20 bg-black/5 hover:scale-105 transition text-center">
+                                <span class="text-2xl block">🌙</span>
+                                <span class="text-xs font-semibold mt-1 block">Ганцаардсан</span>
+                            </button>
+                            <button onclick="selectQuickMood('inspired')" class="col-span-2 sm:col-span-1 p-2.5 rounded-2xl border border-transparent hover:border-current/20 bg-black/5 hover:scale-105 transition text-center">
+                                <span class="text-2xl block">☀️</span>
+                                <span class="text-xs font-semibold mt-1 block">Урамтай</span>
+                            </button>
+                        </div>
+                        <!-- Instant Empathetic Response Box -->
+                        <div id="quick-mood-response" class="hidden mt-4 pt-3 border-t border-current/10 text-sm leading-relaxed flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-2.5">
+                                <i data-lucide="sparkles" class="w-5 h-5 shrink-0 mt-0.5" style="color: var(--accent-primary);"></i>
+                                <p id="quick-mood-text" class="text-xs sm:text-sm"></p>
+                            </div>
+                            <button onclick="switchView('lab')" class="shrink-0 px-3 py-1.5 rounded-xl theme-badge text-xs font-bold hover:opacity-80">
+                                Дасгал хийх →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Primary Action Buttons -->
+                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                        <button onclick="switchView('branches')" class="theme-btn-primary px-6 py-3.5 rounded-2xl font-semibold text-sm flex items-center gap-2 shadow-lg">
+                            <i data-lucide="compass" class="w-4 h-4"></i>
+                            <span>9 Салбар мэдлэг судлах</span>
+                        </button>
+                        <button onclick="switchView('tests')" class="glass-card hover-lift px-6 py-3.5 rounded-2xl font-semibold text-sm flex items-center gap-2">
+                            <i data-lucide="clipboard-check" class="w-4 h-4" style="color: var(--accent-primary);"></i>
+                            <span>Өөрийгөө сонжих сорилууд</span>
+                        </button>
+                        <button onclick="switchView('lab')" class="glass-card hover-lift px-5 py-3.5 rounded-2xl font-semibold text-sm flex items-center gap-2">
+                            <i data-lucide="wind" class="w-4 h-4" style="color: var(--accent-primary);"></i>
+                            <span>Тайвшрах Лаб</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Hero Visual Composition -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        <div class="rounded-3xl overflow-hidden shadow-2xl border-4 border-white/40 relative z-10 aspect-[4/5]">
+                            <img 
+                                src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1000&q=80" 
+                                alt="Mindfulness meditation in nature" 
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                                onerror="this.src='https://placehold.co/800x1000/0d9488/ffffff?text=MindCare+Mongolia'"
+                            >
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
+                                <span class="text-xs uppercase tracking-widest opacity-80 font-semibold mb-1">Виктор Франкл — Сэтгэл засалч</span>
+                                <blockquote class="text-sm sm:text-base italic font-light leading-relaxed">
+                                    "Өдөөгч болон хариу үйлдэл хоёрын хооронд жижигхэн орон зай бий. Тэр орон зайд бидний сонгох эрх чөлөө оршдог."
+                                </blockquote>
+                            </div>
+                        </div>
+
+                        <!-- Floating Interactive Card -->
+                        <div onclick="openConceptModal('jung')" class="glass-card-strong p-4 rounded-2xl absolute -bottom-6 -left-4 sm:-left-8 z-20 max-w-xs animate-float cursor-pointer hover:scale-105 transition">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl overflow-hidden shrink-0 border border-teal-500">
+                                    <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=300&q=80" alt="Carl Jung" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold flex items-center gap-1">Карл Юнг <i data-lucide="external-link" class="w-3 h-3"></i></p>
+                                    <p class="text-[11px] theme-text-secondary mt-0.5">"Ухамсарт авчраагүй зүйл чинь хувь тавилан болж хувирдаг."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Platform Architecture Cards (Direct Window Switchers) -->
+            <div>
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <span class="theme-badge px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Платформын бүтэц</span>
+                        <h2 class="font-serif-display text-3xl sm:text-4xl font-bold mt-3">Та өнөөдөр аль цонхоор зочлох вэ?</h2>
+                    </div>
+                    <p class="text-sm theme-text-secondary max-w-md">
+                        Доорх картууд дээр дарахад тухайн сэдвийн бие даасан цонх руу зөөлөн шилжилтээр (Transition) орно.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div onclick="switchView('branches')" class="glass-card hover-lift rounded-3xl p-6 cursor-pointer flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl theme-badge flex items-center justify-center mb-5 group-hover:scale-110 transition">
+                                <i data-lucide="compass" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">9 Салбар Мэдлэг</h3>
+                            <p class="text-sm theme-text-secondary leading-relaxed">
+                                Танин мэдэхүй, Ээнэгшихүйн онол, Дотоод хүүхэд, Карл Юнгийн Сүүдэр би, Тархи судлал зэрэг 9 том сэдэв.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-current/10 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Салбарууд руу орох</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="switchView('tests')" class="glass-card hover-lift rounded-3xl p-6 cursor-pointer flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl theme-badge flex items-center justify-center mb-5 group-hover:scale-110 transition">
+                                <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">3 Төрлийн Сорил</h3>
+                            <p class="text-sm theme-text-secondary leading-relaxed">
+                                Хайр дурлалын ээнэгших хэв маяг, Сэтгэлийн туйлдал (Burnout), Сэтгэл хөдлөлийн чадамж (EQ) тодорхойлох тестүүд.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-current/10 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Сорил өгөх</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="switchView('lab')" class="glass-card hover-lift rounded-3xl p-6 cursor-pointer flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl theme-badge flex items-center justify-center mb-5 group-hover:scale-110 transition">
+                                <i data-lucide="sparkles" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Тайвшрах Лаборатори</h3>
+                            <p class="text-sm theme-text-secondary leading-relaxed">
+                                4-7-8 амьсгал, 5-4-3-2-1 газардуулах дасгал, CBT сөрөг бодол хувиргагч болон Хүнд бодлоо чөлөөлөх хайрцаг.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-current/10 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Лаборатори нээх</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <div onclick="switchView('library')" class="glass-card hover-lift rounded-3xl p-6 cursor-pointer flex flex-col justify-between group">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl theme-badge flex items-center justify-center mb-5 group-hover:scale-110 transition">
+                                <i data-lucide="book-open" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Кейс & Номын сан</h3>
+                            <p class="text-sm theme-text-secondary leading-relaxed">
+                                Бодит амьдралын сэтгэл зүйн кейс задлан шинжлэл, дэлхийн шилдэг сэтгэл судлалын номын гол санаанууд.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-current/10 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Уншиж судлах</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Deep-Dive Visual Topics on Home -->
+            <div>
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="theme-badge px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Хүн рүү чиглэсэн тайлбар</span>
+                    <h2 class="font-serif-display text-3xl sm:text-4xl font-bold mt-3">Хамгийн их уншигдсан сэтгэл зүйн сэдвүүд</h2>
+                    <p class="theme-text-secondary mt-2 text-sm sm:text-base">Аль ч карт дээр дарж дэлгэрэнгүй тайлбар, шинжлэх ухааны үндэслэл болон дасгалыг тусгай цонхоор уншаарай.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+                    <!-- Featured 1 -->
+                    <div onclick="openConceptModal('attachment')" class="glass-card hover-lift rounded-3xl overflow-hidden cursor-pointer group flex flex-col justify-between">
+                        <div>
+                            <div class="h-56 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80" alt="Attachment Theory" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                <span class="absolute top-4 left-4 theme-badge px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md">Харилцааны сэтгэл зүй</span>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Ээнэгшихүйн онол: Бид яагаад ингэж хайрладаг вэ?</h3>
+                                <p class="text-sm theme-text-secondary leading-relaxed">
+                                    Зарим хүн хайртай хүнээсээ байнга халамж нэхэн түгшдэг бол зарим нь дотносохоос зугтдаг. Бага насны ээнэгшил насанд хүрсэн харилцаанд хэрхэн нөлөөлдөг вэ?
+                                </p>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Тусгай цонхоор унших</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+
+                    <!-- Featured 2 -->
+                    <div onclick="openConceptModal('innerchild')" class="glass-card hover-lift rounded-3xl overflow-hidden cursor-pointer group flex flex-col justify-between">
+                        <div>
+                            <div class="h-56 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1489710437720-ebb67ec84dd2?auto=format&fit=crop&w=800&q=80" alt="Inner Child Healing" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                <span class="absolute top-4 left-4 theme-badge px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md">Гүн сэтгэл засал</span>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Дотоод хүүхдээ сонсох ба эдгээх нь</h3>
+                                <p class="text-sm theme-text-secondary leading-relaxed">
+                                    Бид насанд хүрсэн ч бидний дотор багадаа айсан, гомдсон эсвэл хайр хүссэн бяцхан хүүхэд оршсоор байдаг. Түүнийг хэрхэн тайвшруулах вэ?
+                                </p>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Тусгай цонхоор унших</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+
+                    <!-- Featured 3 -->
+                    <div onclick="openConceptModal('cbt')" class="glass-card hover-lift rounded-3xl overflow-hidden cursor-pointer group flex flex-col justify-between">
+                        <div>
+                            <div class="h-56 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=800&q=80" alt="Cognitive Psychology" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                <span class="absolute top-4 left-4 theme-badge px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md">Танин мэдэхүй</span>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Бодлын урхи буюу Танин мэдэхүйн гажуудал</h3>
+                                <p class="text-sm theme-text-secondary leading-relaxed">
+                                    "Бүх зүйл буруугаар эргэлээ", "Хүн бүр намайг шүүмжилж байна" гэх мэт тархины автомат сөрөг бодлуудыг CBT аргаар хэрхэн таньж зогсоох вэ?
+                                </p>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Тусгай цонхоор унших</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             VIEW 2: СЭТГЭЛ СУДЛАЛЫН САЛБАРУУД (9 COMPREHENSIVE BRANCHES)
+             ===================================================== -->
+        <div id="view-branches" class="page-view space-y-12">
+            <div class="glass-card rounded-3xl p-8 sm:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="max-w-2xl">
+                    <span class="theme-badge px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Сэтгэл судлалын нэвтэрхий толь</span>
+                    <h1 class="font-serif-display text-3xl sm:text-5xl font-bold mt-3">Сэтгэл Судлалын 9 Үндсэн Салбар & Ойлголт</h1>
+                    <p class="theme-text-secondary mt-3 text-sm sm:text-base leading-relaxed">
+                        Сэтгэл судлал нь хүний тархины нейроны холбоосоос эхлээд гэр бүлийн харилцаа, бага насны дурсамж хүртэлх өргөн хүрээг хамардаг. Ангилал сонгож шүүх эсвэл карт дээр дарж дэлгэрэнгүй цонхыг нээнэ үү.
+                    </p>
+                </div>
+                <!-- Category Filter Buttons -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterBranches('all')" id="filter-all" class="px-4 py-2 rounded-xl text-xs font-bold theme-btn-primary">Бүгд (9)</button>
+                    <button onclick="filterBranches('clinical')" id="filter-clinical" class="px-4 py-2 rounded-xl text-xs font-semibold glass-card">Эмнэлзүй & Сэтгэл засал</button>
+                    <button onclick="filterBranches('relationship')" id="filter-relationship" class="px-4 py-2 rounded-xl text-xs font-semibold glass-card">Харилцаа & Гүн сэтгэл зүй</button>
+                    <button onclick="filterBranches('brain')" id="filter-brain" class="px-4 py-2 rounded-xl text-xs font-semibold glass-card">Тархи & Өсөлт</button>
+                </div>
+            </div>
+
+            <!-- Dynamic 9 Branches Grid -->
+            <div id="branches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+                <!-- Populated dynamically via JavaScript -->
+            </div>
+        </div>
+
+        <!-- =====================================================
+             VIEW 3: ӨӨРИЙГӨӨ ТАНИХ СОРИЛУУД (3 INTERACTIVE TESTS)
+             ===================================================== -->
+        <div id="view-tests" class="page-view space-y-12">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="theme-badge px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Интерактив оношилгоо</span>
+                <h1 class="font-serif-display text-3xl sm:text-5xl font-bold mt-3">Өөрийгөө Таних Сэтгэл Зүйн Сорилууд</h1>
+                <p class="theme-text-secondary mt-3 text-sm sm:text-base">
+                    Доорх 3 сорилоос сонгож асуултуудад хариулснаар таны одоогийн сэтгэл зүйн төлөв болон харилцааны онцлогийг тооцоолон, хувь хүнд тохирсон зөвлөмжийг гаргаж өгнө.
+                </p>
+            </div>
+
+            <!-- 3 Test Selector Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <button onclick="selectTest('balance')" id="test-tab-balance" class="glass-card hover-lift p-6 rounded-3xl text-left border-2 border-teal-500 transition flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Сорил #1 • 5 Асуулт</span>
+                        <h3 class="text-xl font-bold mt-3">Сэтгэлийн Тэнцвэр ба Туйлдал (Burnout)</h3>
+                        <p class="text-xs theme-text-secondary mt-2 leading-relaxed">Нойр, эрч хүч, сэтгэлийн ядаргаа болон стрессийн түвшинг хэмжих сорил.</p>
+                    </div>
+                    <span class="text-xs font-bold mt-4 block" style="color: var(--accent-primary);">Идэвхтэй сорил →</span>
+                </button>
+
+                <button onclick="selectTest('attachment')" id="test-tab-attachment" class="glass-card hover-lift p-6 rounded-3xl text-left border-2 border-transparent transition flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Сорил #2 • 5 Асуулт</span>
+                        <h3 class="text-xl font-bold mt-3">Ээнэгшихүйн Хэв Маяг (Attachment Style)</h3>
+                        <p class="text-xs theme-text-secondary mt-2 leading-relaxed">Та хайр дурлал болон дотны харилцаанд Итгэлтэй, Түгшүүртэй эсвэл Зугтаах хэв маягтай юу?</p>
+                    </div>
+                    <span class="text-xs font-bold mt-4 block" style="color: var(--accent-primary);">Энэ сорилыг сонгох →</span>
+                </button>
+
+                <button onclick="selectTest('eq')" id="test-tab-eq" class="glass-card hover-lift p-6 rounded-3xl text-left border-2 border-transparent transition flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Сорил #3 • 5 Асуулт</span>
+                        <h3 class="text-xl font-bold mt-3">Сэтгэл Хөдлөлийн Оюун Ухаан (EQ)</h3>
+                        <p class="text-xs theme-text-secondary mt-2 leading-relaxed">Өөрийн болон бусдын сэтгэл хөдлөлийг таних, удирдах, эмпати үзүүлэх чадварын сорил.</p>
+                    </div>
+                    <span class="text-xs font-bold mt-4 block" style="color: var(--accent-primary);">Энэ сорилыг сонгох →</span>
+                </button>
+            </div>
+
+            <!-- Active Test Runner Stage -->
+            <div class="glass-card-strong rounded-3xl p-6 sm:p-12 max-w-4xl mx-auto">
+                <div class="flex flex-wrap items-center justify-between gap-4 pb-6 mb-6 border-b border-current/10">
+                    <div>
+                        <span id="active-test-category" class="text-xs font-bold uppercase tracking-wider" style="color: var(--accent-primary);">СОРИЛ #1</span>
+                        <h2 id="active-test-title" class="font-serif-display text-2xl sm:text-3xl font-bold mt-1">Сэтгэлийн Тэнцвэр ба Туйлдал</h2>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="quiz-progress-badge" class="text-xs font-bold px-3.5 py-1.5 rounded-xl theme-badge">Асуулт 1 / 5</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full h-2 rounded-full bg-black/10 overflow-hidden mb-8">
+                    <div id="quiz-progress-bar" class="h-full theme-btn-primary transition-all duration-500" style="width: 20%;"></div>
+                </div>
+
+                <!-- Question Box -->
+                <div id="quiz-container" class="space-y-6">
+                    <p id="quiz-question-text" class="text-lg sm:text-xl font-semibold leading-relaxed"></p>
+                    <div id="quiz-options" class="space-y-3"></div>
+                </div>
+
+                <!-- Result Box -->
+                <div id="quiz-result" class="hidden space-y-6">
+                    <div class="p-6 sm:p-8 rounded-3xl bg-black/5 border border-current/15">
+                        <span id="quiz-score-tag" class="theme-badge px-3.5 py-1 rounded-full text-xs font-bold">Дүнгийн тайлан</span>
+                        <h3 id="quiz-result-title" class="font-serif-display text-2xl sm:text-3xl font-bold mt-3 mb-2"></h3>
+                        <p id="quiz-result-desc" class="text-sm sm:text-base theme-text-secondary leading-relaxed"></p>
+                    </div>
+                    <div class="p-6 rounded-3xl border border-current/10">
+                        <h4 class="text-xs font-bold uppercase tracking-wider mb-3" style="color: var(--accent-primary);">Зөвлөмж ба Дасгалууд:</h4>
+                        <ul id="quiz-recommendations" class="text-sm space-y-2.5 theme-text-secondary list-disc pl-5"></ul>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="resetQuiz()" class="theme-btn-primary px-6 py-3 rounded-xl text-xs font-bold">Дахин сорил өгөх</button>
+                        <button onclick="switchView('lab')" class="glass-card px-6 py-3 rounded-xl text-xs font-bold">Тайвшрах Лаборатори руу орох →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             VIEW 4: ТАЙВШРАХ ЛАБОРАТОРИ (MINDFULNESS & CBT LAB)
+             ===================================================== -->
+        <div id="view-lab" class="page-view space-y-14">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="theme-badge px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Сэтгэл заслын практик багажууд</span>
+                <h1 class="font-serif-display text-3xl sm:text-5xl font-bold mt-3">Дотоод Тайвшралын Лаборатори</h1>
+                <p class="theme-text-secondary mt-3 text-sm sm:text-base">
+                    Түгшүүр, стресс эсвэл сөрөг бодлын үер орж ирэх үед яг энд байгаа 4 интерактив дасгалаар мэдрэлийн системээ тайвшруулаарай.
+                </p>
+            </div>
+
+            <!-- Tool 1: 4-7-8 Breathing Visualizer -->
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    <div class="lg:col-span-6 space-y-5">
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Дасгал #1 • Парасимпатик мэдрэл</span>
+                        <h2 class="font-serif-display text-2xl sm:text-4xl font-bold">4-7-8 Амьсгалын Хэмнэл Удирдагч</h2>
+                        <p class="text-sm sm:text-base theme-text-secondary leading-relaxed">
+                            Тархи сандрах үед амьсгал өнгөц болдог. 4 секунд хамраараа амьсгал авч, 7 секунд бариад, 8 секунд уртаар гаргах нь зүрхний хэмнэлийг 60 секундийн дотор тогтворжуулдаг.
+                        </p>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="p-3.5 rounded-2xl bg-black/5 text-center">
+                                <span class="text-xl font-bold block" style="color: var(--accent-primary);">4 сек</span>
+                                <span class="text-xs theme-text-secondary">Амьсгал авах</span>
+                            </div>
+                            <div class="p-3.5 rounded-2xl bg-black/5 text-center">
+                                <span class="text-xl font-bold block" style="color: var(--accent-primary);">7 сек</span>
+                                <span class="text-xs theme-text-secondary">Түгжих</span>
+                            </div>
+                            <div class="p-3.5 rounded-2xl bg-black/5 text-center">
+                                <span class="text-xl font-bold block" style="color: var(--accent-primary);">8 сек</span>
+                                <span class="text-xs theme-text-secondary">Зөөлөн гаргах</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 pt-2">
+                            <button onclick="toggleBreathing()" class="theme-btn-primary px-7 py-3.5 rounded-2xl font-semibold text-sm flex items-center gap-2 shadow-lg">
+                                <i data-lucide="play" class="w-4 h-4"></i>
+                                <span id="breath-btn-text">Амьсгал эхлүүлэх</span>
+                            </button>
+                            <span id="breath-cycle-counter" class="text-xs font-bold theme-text-secondary">Давталт: 0 / 4</span>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 flex flex-col items-center justify-center py-8 min-h-[320px]">
+                        <div id="breath-outer-ring" class="w-60 h-60 sm:w-72 sm:h-72 rounded-full border-2 border-dashed border-current/25 flex items-center justify-center transition-all duration-1000">
+                            <div id="breath-circle" class="w-40 h-40 rounded-full flex flex-col items-center justify-center text-center p-4 shadow-2xl" style="background: radial-gradient(circle, var(--accent-primary), var(--accent-secondary)); color: white;">
+                                <span id="breath-status-label" class="text-base font-bold">Бэлэн үү?</span>
+                                <span id="breath-timer-num" class="text-3xl font-extrabold mt-1">•••</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool 2 & 3 Grid: 5-4-3-2-1 Grounding + Worry Release -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- 5-4-3-2-1 Sensory Grounding Interactive Tool -->
+                <div class="lg:col-span-6 glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Дасгал #2 • Паник ба Түгшүүр зогсоох</span>
+                        <h3 class="font-serif-display text-2xl sm:text-3xl font-bold mt-2">5-4-3-2-1 Мэдрэхүйн Газардуулга</h3>
+                        <p class="text-sm theme-text-secondary mt-2 leading-relaxed">
+                            Бодол хэт ирээдүй рүү эсвэл өнгөрсөн рүү давхиад байвал 5 мэдрэхүйгээ ашиглан тархиа "Яг одоо, энд" авчрах дасгал.
+                        </p>
+
+                        <div id="grounding-step-box" class="mt-6 p-6 rounded-2xl bg-black/5 border border-current/10 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span id="grounding-badge" class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Алхам 1 / 5</span>
+                                <span id="grounding-emoji" class="text-2xl">👀</span>
+                            </div>
+                            <h4 id="grounding-title" class="text-lg font-bold">Эргэн тойрноосоо ХАРЖ буй 5 зүйлийг нэрлэ:</h4>
+                            <p id="grounding-desc" class="text-xs theme-text-secondary">Ширээн дээрх аяга, цонхны гэрэл, хананы өнгө гэх мэт нүдэнд харагдаж буй 5 зүйл дээр анхаарлаа тогтоо.</p>
+                            <input id="grounding-input" type="text" placeholder="Жишээ нь: Ногоон ургамал, ном, цэнхэр үзэг..." class="w-full p-3.5 rounded-xl bg-black/5 border border-current/15 text-sm focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center justify-between">
+                        <button onclick="resetGrounding()" class="text-xs font-semibold theme-text-secondary hover:underline">Эхнээс нь</button>
+                        <button onclick="nextGroundingStep()" class="theme-btn-primary px-6 py-3 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                            <span id="grounding-btn-text">Дараагийн мэдрэхүй</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Thought Release Box (Externalization) -->
+                <div class="lg:col-span-6 glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Дасгал #3 • Сэтгэл чөлөөлөлт</span>
+                        <h3 class="font-serif-display text-2xl sm:text-3xl font-bold mt-2">Хүнд Бодлоо Салхинд Хийсгэх</h3>
+                        <p class="text-sm theme-text-secondary mt-2 leading-relaxed">
+                            Дотроо хадгалсан гомдол, айдас, санаа зовнилоо бичээд "Бодлыг чөлөөлөх" товч дараарай. Тэр бодол таны толгойноос гарч замхран одох болно.
+                        </p>
+
+                        <div id="worry-box-wrapper" class="mt-6">
+                            <textarea id="worry-input" rows="4" placeholder="Энд өөрийг тань зовоож буй бодлыг чөлөөтэй бичээрэй..." class="w-full p-4 rounded-2xl bg-black/5 border border-current/15 focus:outline-none text-sm resize-none"></textarea>
+                            <div class="flex items-center justify-between mt-3">
+                                <span class="text-xs theme-text-secondary flex items-center gap-1">
+                                    <i data-lucide="lock" class="w-3.5 h-3.5"></i> Нууцлалтай, шууд устана
+                                </span>
+                                <button onclick="releaseWorry()" class="theme-btn-primary px-5 py-3 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                                    <i data-lucide="feather" class="w-4 h-4"></i>
+                                    <span>Бодлыг чөлөөлөх</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="worry-released-msg" class="hidden my-8 p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-2">
+                            <i data-lucide="sparkles" class="w-8 h-8 mx-auto text-emerald-500"></i>
+                            <p class="text-base font-bold">Бодол агаарт замхран одлоо.</p>
+                            <p class="text-xs theme-text-secondary">Гүнзгий амьсгал аваад мөрөө суллаарай.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-5 border-t border-current/10 flex items-center justify-between gap-4">
+                        <p id="affirmation-text" class="font-serif-display italic text-sm sm:text-base">"Би төгс байх албагүй ч, өөрийгөө хайрлах бүрэн эрхтэй."</p>
+                        <button onclick="nextAffirmation()" class="shrink-0 px-3 py-2 rounded-xl theme-badge text-xs font-bold flex items-center gap-1">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Үг солих
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool 4: CBT Cognitive Reframing Interactive Worksheet -->
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Дасгал #4 • Танин Мэдэхүйн Сэтгэл Засал (CBT)</span>
+                <h3 class="font-serif-display text-2xl sm:text-3xl font-bold mt-2">Сөрөг Бодлыг Тэнцвэртэй Бодлоор Солих Хүснэгт</h3>
+                <p class="text-sm theme-text-secondary mt-2 max-w-3xl">
+                    Танин мэдэхүйн сэтгэл засалд (Cognitive Behavioral Therapy) биднийг үйл явдал өөрөө биш, харин тухайн үйл явдалд өгч буй бидний тайлбар л шаналгадаг гэж үздэг. Жишээнүүд дээр дарж эсвэл өөрийн бодлоо бичиж хувиргана уу.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                        <label class="text-xs font-bold uppercase tracking-wider text-rose-500 block mb-2">1. Автомат сөрөг бодол</label>
+                        <textarea id="cbt-negative" rows="3" class="w-full bg-transparent text-sm focus:outline-none resize-none">Би энэ илтгэл дээр гацчихвал бүгд намайг чадваргүй гэж бодно.</textarea>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                        <label class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block mb-2">2. Бодит баримт ба Нотлох зүйл</label>
+                        <textarea id="cbt-evidence" rows="3" class="w-full bg-transparent text-sm focus:outline-none resize-none">Хүн бүр л сандардаг. Өмнө нь би хэд хэдэн удаа амжилттай танилцуулга хийж байсан.</textarea>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                        <label class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-2">3. Эрүүл, тэнцвэртэй шинэ бодол</label>
+                        <textarea id="cbt-balanced" rows="3" class="w-full bg-transparent text-sm focus:outline-none resize-none">Сандрах бол хэвийн үзэгдэл. Төгс биш байсан ч би гол санаагаа ойлгомжтой хүргэж чадна.</textarea>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs theme-text-secondary self-center mr-1">Жишээ татах:</span>
+                        <button onclick="loadCBTExample(0)" class="px-3 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 text-xs font-medium">Ажлын алдаа</button>
+                        <button onclick="loadCBTExample(1)" class="px-3 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 text-xs font-medium">Найзын хариу</button>
+                        <button onclick="loadCBTExample(2)" class="px-3 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 text-xs font-medium">Ирээдүйн айдас</button>
+                    </div>
+                    <span id="cbt-saved-toast" class="text-xs font-bold text-emerald-500 hidden">✓ Тархины шинэ холбоос идэвхэжлээ!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             VIEW 5: КЕЙСҮҮД & НОМЫН САН (STORIES, BOOKS & FAQ)
+             ===================================================== -->
+        <div id="view-library" class="page-view space-y-16">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="theme-badge px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Амьдралын бодит түүх ба Номын хураангуй</span>
+                <h1 class="font-serif-display text-3xl sm:text-5xl font-bold mt-3">Сэтгэл Зүйн Кейсүүд & Номын Сан</h1>
+                <p class="theme-text-secondary mt-3 text-sm sm:text-base">
+                    Бусад хүмүүст тохиолдсон сэтгэл зүйн сорилтууд, сэтгэл судлаачийн тайлбар болон дэлхийн шилдэг бүтээлүүдийн гол санаа.
+                </p>
+            </div>
+
+            <!-- Real-life Case Studies -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+                <div onclick="openReadingModal('case1')" class="glass-card hover-lift rounded-3xl p-6 cursor-pointer flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Кейс #1 • Төгс төгөлдөр рүү тэмүүлэгч</span>
+                        <h3 class="text-xl font-bold mt-3">"Бүх хүнд таалагдах гэж хичээсээр өөрийгөө алдсан нь"</h3>
+                        <p class="text-sm theme-text-secondary mt-2 leading-relaxed">
+                            27 настай Ану бусдад "Үгүй" гэж хэлж чаддаггүйгээсээ болж ажлын хэт ачаалалд орсон түүх ба сэтгэл зүйн хил хязгаар тогтоох аргачлал.
+                        </p>
+                    </div>
+                    <span class="text-xs font-bold mt-5 block" style="color: var(--accent-primary);">Кейс задаргааг унших →</span>
+                </div>
+
+                <div onclick="openReadingModal('case2')" class="glass-card hover-lift rounded-3xl p-6 cursor-pointer flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Кейс #2 • Хуурамч дүрийн хам шинж</span>
+                        <h3 class="text-xl font-bold mt-3">"Би энэ амжилтад хүрэх эрхгүй мэт санагддаг (Impostor Syndrome)"</h3>
+                        <p class="text-sm theme-text-secondary mt-2 leading-relaxed">
+                            Ажилдаа тушаал дэвшсэн ч "Хүмүүс намайг юу ч мэдэхгүй гэдгийг удахгүй мэдчих вий" гэж айдаг Төгөлдөрийн кейс.
+                        </p>
+                    </div>
+                    <span class="text-xs font-bold mt-5 block" style="color: var(--accent-primary);">Кейс задаргааг унших →</span>
+                </div>
+
+                <div onclick="openReadingModal('case3')" class="glass-card hover-lift rounded-3xl p-6 cursor-pointer flex flex-col justify-between">
+                    <div>
+                        <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Кейс #3 • Хосын харилцаа</span>
+                        <h3 class="text-xl font-bold mt-3">"Хөөцөлдөгч ба Зугтагч хоёрын тойрог"</h3>
+                        <p class="text-sm theme-text-secondary mt-2 leading-relaxed">
+                            Нэг нь ярилцах гэж шахах тусам нөгөө нь дуугаа хурааж холддог хосын зөрчлийг Ээнэгшихүйн онолоор тайлбарлах нь.
+                        </p>
+                    </div>
+                    <span class="text-xs font-bold mt-5 block" style="color: var(--accent-primary);">Кейс задаргааг унших →</span>
+                </div>
+            </div>
+
+            <!-- Must-Read Psychology Books Section -->
+            <div class="glass-card rounded-3xl p-6 sm:p-10">
+                <h2 class="font-serif-display text-2xl sm:text-3xl font-bold mb-6">Заавал унших сэтгэл судлалын 4 бүтээл</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="p-5 rounded-2xl bg-black/5 space-y-2">
+                        <span class="text-xs font-bold" style="color: var(--accent-primary);">Бессел ван дер Колк</span>
+                        <h4 class="font-bold text-base">"Бие махбод бүхнийг санадаг" (The Body Keeps the Score)</h4>
+                        <p class="text-xs theme-text-secondary leading-relaxed">Сэтгэлийн шарх зөвхөн дурсамжинд бус булчин, мэдрэлийн тогтолцоонд хэрхэн хадгалагддагийг тайлбарласан бүтээл.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-black/5 space-y-2">
+                        <span class="text-xs font-bold" style="color: var(--accent-primary);">Виктор Франкл</span>
+                        <h4 class="font-bold text-base">"Утга учрыг эрэлхийлэхүй" (Man's Search for Meaning)</h4>
+                        <p class="text-xs theme-text-secondary leading-relaxed">Хүн ямар ч хүнд нөхцөлд амьдралын утга учраа олж чадвал тэсэж үлддэг тухай логотерапийн сонгодог ном.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-black/5 space-y-2">
+                        <span class="text-xs font-bold" style="color: var(--accent-primary);">Амир Левин & Рэйчел Хеллер</span>
+                        <h4 class="font-bold text-base">"Ээнэгшил" (Attached)</h4>
+                        <p class="text-xs theme-text-secondary leading-relaxed">Насанд хүрэгчдийн хайр дурлалын харилцааны хэв маягийг шинжлэх ухаанчаар тайлбарласан гарын авлага.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-black/5 space-y-2">
+                        <span class="text-xs font-bold" style="color: var(--accent-primary);">Дэниел Канеман</span>
+                        <h4 class="font-bold text-base">"Тунгаах хурд: Удаан ба Хурдан" (Thinking, Fast and Slow)</h4>
+                        <p class="text-xs theme-text-secondary leading-relaxed">Нобелийн шагналт эрдэмтний хүний тархи шийдвэр гаргахдаа хэрхэн алддаг тухай судалгаа.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             VIEW 6: СЭТГЭЛ ЗҮЙЧИД & ЗӨВЛӨГӨӨ АВАХ (COUNSELING)
+             ===================================================== -->
+        <div id="view-counseling" class="page-view space-y-12">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="theme-badge px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Мэргэжлийн дэмжлэг</span>
+                <h1 class="font-serif-display text-3xl sm:text-5xl font-bold mt-3">Сэтгэл Зүйчтэй Уулзах Цаг Захиалах</h1>
+                <p class="theme-text-secondary mt-3 text-sm sm:text-base">
+                    Сэтгэл зүйчид хандах нь сул доройн шинж биш, харин өөрийнхөө оюун санааны эрүүл мэндэд оруулж буй хамгийн том хөрөнгө оруулалт юм.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+                <!-- Psychologist 1 -->
+                <div class="glass-card rounded-3xl overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="h-60 overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=700&q=80" alt="Psychologist" class="w-full h-full object-cover">
+                            <span class="absolute bottom-3 left-3 theme-badge px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md">Клиник сэтгэл судлаач</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold">Б. Сарангэрэл (Магистр)</h3>
+                            <p class="text-xs theme-text-secondary mt-1">Туршлага: 9 жил • Танин мэдэхүйн засал (CBT)</p>
+                            <p class="text-sm theme-text-secondary mt-3 leading-relaxed">Сэтгэл түгшилт, нойргүйдэл, паник дайралт болон ажлын туйлдал чиглэлээр ганцаарчилсан зөвлөгөө өгнө.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <button onclick="openBookingModal('Б. Сарангэрэл')" class="w-full theme-btn-primary py-3 rounded-xl text-xs font-bold">Цаг захиалах</button>
+                    </div>
+                </div>
+
+                <!-- Psychologist 2 -->
+                <div class="glass-card rounded-3xl overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="h-60 overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=700&q=80" alt="Psychologist" class="w-full h-full object-cover">
+                            <span class="absolute bottom-3 left-3 theme-badge px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md">Гэр бүл & Хосын засалч</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold">Г. Энхжин (Докторант)</h3>
+                            <p class="text-xs theme-text-secondary mt-1">Туршлага: 7 жил • Ээнэгшил ба Гэр бүлийн систем</p>
+                            <p class="text-sm theme-text-secondary mt-3 leading-relaxed">Хосын үл ойлголцол, ээнэгшихүйн шарх, гэр бүлийн харилцаа болон салалтын дараах сэтгэл засал.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <button onclick="openBookingModal('Г. Энхжин')" class="w-full theme-btn-primary py-3 rounded-xl text-xs font-bold">Цаг захиалах</button>
+                    </div>
+                </div>
+
+                <!-- Psychologist 3 -->
+                <div class="glass-card rounded-3xl overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="h-60 overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=700&q=80" alt="Psychologist" class="w-full h-full object-cover">
+                            <span class="absolute bottom-3 left-3 theme-badge px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md">Травма & Хүүхдийн сэтгэл зүй</span>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold">Д. Тэмүүлэн (Магистр)</h3>
+                            <p class="text-xs theme-text-secondary mt-1">Туршлага: 11 жил • EMDR & Дотоод хүүхэд</p>
+                            <p class="text-sm theme-text-secondary mt-3 leading-relaxed">Өсвөр насны хүүхдийн сэтгэл зүй, бага насны травма болон өөртөө итгэх итгэлийг сэргээх засал.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <button onclick="openBookingModal('Д. Тэмүүлэн')" class="w-full theme-btn-primary py-3 rounded-xl text-xs font-bold">Цаг захиалах</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- =========================================================
+         RICH MULTI-COLUMN FOOTER
+         ========================================================= -->
+    <footer class="border-t border-current/10 pt-16 pb-10 px-4 sm:px-8 mt-12 glass-card">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-current/10">
+            
+            <!-- Col 1: Brand & Mission -->
+            <div class="lg:col-span-4 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl theme-btn-primary flex items-center justify-center shadow">
+                        <i data-lucide="brain-circuit" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg block leading-none">MindCare Mongolia</span>
+                        <span class="text-xs theme-text-secondary">Сэтгэл Судлал ба Дотоод Амар Амгалан</span>
+                    </div>
+                </div>
+                <p class="text-xs sm:text-sm theme-text-secondary leading-relaxed">
+                    Хүн бүрт сэтгэл зүйн шинжлэх ухааны үнэн зөв, дулаан, ойлгомжтой мэдлэгийг түгээж, өөрийгөө болон бусдыг хайрлах соёлыг дэлгэрүүлэх зорилготой платформ.
+                </p>
+                <div class="p-3.5 rounded-2xl bg-black/5 border border-current/10 text-xs space-y-1">
+                    <p class="font-bold flex items-center gap-1.5" style="color: var(--accent-primary);">
+                        <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> Сэтгэл зүйн тусламжийн утас:
+                    </p>
+                    <p class="theme-text-secondary">СЭМҮТ: <strong>1800-2000</strong> (24 цаг) • Хүүхдийн тусламж: <strong>108</strong></p>
+                </div>
+            </div>
+
+            <!-- Col 2: Navigation Links -->
+            <div class="lg:col-span-2 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider opacity-80">Платформ цэс</h4>
+                <ul class="space-y-2 text-xs sm:text-sm theme-text-secondary">
+                    <li><button onclick="switchView('home')" class="hover:underline">Нүүр хуудас</button></li>
+                    <li><button onclick="switchView('branches')" class="hover:underline">9 Салбар мэдлэг</button></li>
+                    <li><button onclick="switchView('tests')" class="hover:underline">Өөрийгөө таних сорил</button></li>
+                    <li><button onclick="switchView('lab')" class="hover:underline">Тайвшрах лаборатори</button></li>
+                    <li><button onclick="switchView('library')" class="hover:underline">Кейс & Номын сан</button></li>
+                    <li><button onclick="switchView('counseling')" class="hover:underline">Сэтгэл зүйчид</button></li>
+                </ul>
+            </div>
+
+            <!-- Col 3: Deep Topics -->
+            <div class="lg:col-span-3 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider opacity-80">Чухал сэдвүүд</h4>
+                <ul class="space-y-2 text-xs sm:text-sm theme-text-secondary">
+                    <li><button onclick="openConceptModal('anxiety')" class="hover:underline">Сэтгэл түгшилт ба Паник</button></li>
+                    <li><button onclick="openConceptModal('attachment')" class="hover:underline">Ээнэгшихүйн 4 хэв маяг</button></li>
+                    <li><button onclick="openConceptModal('innerchild')" class="hover:underline">Дотоод хүүхдийн шарх</button></li>
+                    <li><button onclick="openConceptModal('jung')" class="hover:underline">Карл Юнг ба Сүүдэр би</button></li>
+                    <li><button onclick="openConceptModal('cbt')" class="hover:underline">Танин мэдэхүйн гажуудал (CBT)</button></li>
+                    <li><button onclick="openConceptModal('neuro')" class="hover:underline">Тархины уян хатан чанар</button></li>
+                </ul>
+            </div>
+
+            <!-- Col 4: Newsletter Subscription -->
+            <div class="lg:col-span-3 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider opacity-80">Сэтгэлийн захидал</h4>
+                <p class="text-xs theme-text-secondary leading-relaxed">Долоо хоног бүр сэтгэл зүйн богино дасгал, ухаарлын захидлыг имэйлээр хүлээн аваарай.</p>
+                <div class="space-y-2">
+                    <input id="newsletter-email" type="email" placeholder="Имэйл хаягаа оруулна уу..." class="w-full px-3.5 py-2.5 rounded-xl bg-black/5 border border-current/15 text-xs focus:outline-none">
+                    <button onclick="subscribeNewsletter()" class="w-full theme-btn-primary py-2.5 rounded-xl text-xs font-bold">Бүртгүүлэх</button>
+                </div>
+                <p id="newsletter-toast" class="text-xs font-semibold text-emerald-500 hidden">✓ Баярлалаа! Та амжилттай бүртгэгдлээ.</p>
+            </div>
+        </div>
+
+        <!-- Bottom Copyright & Back to Top -->
+        <div class="max-w-7xl mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs theme-text-secondary">
+            <p>© 2026 MindCare Mongolia. Хүн төвтэй сэтгэл судлалын дижитал платформ.</p>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleVSCodeModal(true)" class="hover:underline">VS Code заавар</button>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-3.5 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 font-semibold flex items-center gap-1 text-current">
+                    <span>Дээш буцах</span>
+                    <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =========================================================
+         MODAL 1: DEEP PSYCHOLOGY BRANCH / CONCEPT WINDOW
+         ========================================================= -->
+    <div id="concept-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-window glass-card-strong rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-10 relative">
+            <button onclick="closeConceptModal()" class="sticky top-2 float-right w-10 h-10 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <span id="modal-tag" class="theme-badge px-3.5 py-1 rounded-full text-xs font-bold">Сэтгэл судлалын тайлбар</span>
+            <h3 id="modal-title" class="font-serif-display text-2xl sm:text-4xl font-bold mt-3"></h3>
+            <p id="modal-subtitle" class="text-xs uppercase tracking-wider opacity-60 mt-1 mb-6"></p>
+            
+            <div class="space-y-6 text-sm sm:text-base leading-relaxed">
+                <div class="p-5 rounded-2xl bg-black/5 border border-current/10">
+                    <h4 class="font-bold mb-2 flex items-center gap-2">
+                        <i data-lucide="brain" class="w-5 h-5" style="color: var(--accent-primary);"></i>
+                        Шинжлэх ухааны болон сэтгэл зүйн тайлбар:
+                    </h4>
+                    <p id="modal-why" class="theme-text-secondary"></p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold mb-2.5 flex items-center gap-2">
+                        <i data-lucide="eye" class="w-5 h-5" style="color: var(--accent-primary);"></i>
+                        Амьдрал дээр хэрхэн илэрдэг вэ? (Шинж тэмдгүүд):
+                    </h4>
+                    <ul id="modal-symptoms" class="list-disc pl-6 space-y-2 theme-text-secondary"></ul>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-current/15" style="background-color: var(--accent-soft);">
+                    <h4 class="font-bold mb-2.5 flex items-center gap-2" style="color: var(--accent-primary);">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        Өөртэйгөө ажиллах практик алхмууд:
+                    </h4>
+                    <ul id="modal-tips" class="list-disc pl-6 space-y-2"></ul>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-5 border-t border-current/10 flex flex-wrap justify-between items-center gap-3">
+                <button onclick="closeConceptModal(); switchView('lab');" class="theme-btn-primary px-5 py-2.5 rounded-xl text-xs font-bold">
+                    Тайвшрах Лаборатори руу очих →
+                </button>
+                <button onclick="closeConceptModal()" class="px-5 py-2.5 rounded-xl bg-black/10 text-xs font-bold">
+                    Цонхыг хаах
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 2: CASE STUDY & ARTICLE READING WINDOW
+         ========================================================= -->
+    <div id="reading-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-window glass-card-strong rounded-3xl max-w-2xl w-full max-h-[88vh] overflow-y-auto p-6 sm:p-10 relative">
+            <button onclick="closeReadingModal()" class="sticky top-2 float-right w-10 h-10 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <span id="reading-tag" class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Кейс задлан шинжлэл</span>
+            <h3 id="reading-title" class="font-serif-display text-2xl sm:text-3xl font-bold mt-3 mb-4"></h3>
+            <div id="reading-body" class="space-y-4 text-sm sm:text-base theme-text-secondary leading-relaxed"></div>
+            <div class="mt-6 text-right">
+                <button onclick="closeReadingModal()" class="theme-btn-primary px-6 py-2.5 rounded-xl text-xs font-bold">Уншиж дууслаа</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 3: PSYCHOLOGIST SESSION BOOKING WINDOW
+         ========================================================= -->
+    <div id="booking-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-window glass-card-strong rounded-3xl max-w-lg w-full p-6 sm:p-8 relative">
+            <button onclick="closeBookingModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-black/10 flex items-center justify-center">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <span class="theme-badge px-3 py-1 rounded-full text-xs font-bold">Уулзалтын захиалга</span>
+            <h3 class="font-serif-display text-2xl font-bold mt-2">Сэтгэл зүйч: <span id="booking-psych-name" style="color: var(--accent-primary);"></span></h3>
+            
+            <div id="booking-form-box" class="space-y-4 mt-5 text-sm">
+                <div>
+                    <label class="text-xs font-bold block mb-1">Таны нэр (эсвэл нууц нэр байж болно)</label>
+                    <input id="booking-user-name" type="text" placeholder="Жишээ нь: Номин" class="w-full p-3 rounded-xl bg-black/5 border border-current/15 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold block mb-1">Өдөр сонгох</label>
+                        <input type="date" class="w-full p-3 rounded-xl bg-black/5 border border-current/15 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold block mb-1">Уулзалтын хэлбэр</label>
+                        <select class="w-full p-3 rounded-xl bg-black/5 border border-current/15 focus:outline-none">
+                            <option>Онлайн (Zoom / Видео)</option>
+                            <option>Биечлэн уулзах</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold block mb-1">Ярилцахыг хүсэж буй сэдэв (заавал биш)</label>
+                    <textarea rows="3" placeholder="Сэтгэл түгшилт, харилцаа..." class="w-full p-3 rounded-xl bg-black/5 border border-current/15 focus:outline-none resize-none"></textarea>
+                </div>
+                <button onclick="submitBooking()" class="w-full theme-btn-primary py-3.5 rounded-xl font-bold text-xs">Захиалга баталгаажуулах</button>
+            </div>
+
+            <div id="booking-success-box" class="hidden py-8 text-center space-y-3">
+                <i data-lucide="check-circle-2" class="w-12 h-12 mx-auto text-emerald-500"></i>
+                <h4 class="text-lg font-bold">Захиалга амжилттай бүртгэгдлээ!</h4>
+                <p class="text-xs theme-text-secondary">Сэтгэл зүйн төвийн зөвлөх тантай удахгүй холбогдож цагийг баталгаажуулна.</p>
+                <button onclick="closeBookingModal()" class="theme-btn-primary px-6 py-2.5 rounded-xl text-xs font-bold mt-2">Хаах</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 4: VS CODE SETUP INSTRUCTIONS
+         ========================================================= -->
+    <div id="vscode-modal" class="modal-backdrop fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-window glass-card-strong rounded-3xl max-w-xl w-full p-6 sm:p-8 relative">
+            <button onclick="toggleVSCodeModal(false)" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-black/10 flex items-center justify-center">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl theme-btn-primary flex items-center justify-center">
+                    <i data-lucide="code-2" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl">VS Code дээр хэрхэн ажиллуулах вэ?</h3>
+                    <p class="text-xs theme-text-secondary">Бүх код 1 файл дотор багтсан тул шууд ажиллана</p>
+                </div>
+            </div>
+            <ol class="space-y-3 text-sm theme-text-secondary leading-relaxed list-decimal pl-5">
+                <li>VS Code дээрээ <code class="px-2 py-0.5 rounded bg-black/10 font-mono text-xs">index.html</code> файл үүсгэж энэ кодыг бүтнээр нь хуулж тавина.</li>
+                <li><kbd class="px-1.5 py-0.5 rounded bg-black/10 text-xs">Ctrl + S</kbd> дарж хадгалаад <strong>Live Server (Go Live)</strong> эсвэл файл дээрээ 2 товшоод браузер дээрээ нээнэ.</li>
+                <li>Header дээрх цэснүүд дээр дарахад хуудас солигдож, сэдэв бүр дээр дарахад тусгай цонх (Modal) нээгдэнэ.</li>
+            </ol>
+            <div class="mt-6 text-right">
+                <button onclick="toggleVSCodeModal(false)" class="theme-btn-primary px-6 py-2.5 rounded-xl text-xs font-bold">Ойлголоо</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         JAVASCRIPT ENGINE (SPA ROUTER, CANVAS PHYSICS, 9 BRANCHES, 3 TESTS)
+         ========================================================= -->
+    <script>
+        /* =========================================================
+           1. SPA VIEW SWITCHER (HEADER NAVIGATION ENGINE)
+           ========================================================= */
+        const views = ['home', 'branches', 'tests', 'lab', 'library', 'counseling'];
+
+        function switchView(targetView) {
+            views.forEach(v => {
+                const section = document.getElementById(`view-${v}`);
+                const navBtn = document.getElementById(`nav-${v}`);
+                if (v === targetView) {
+                    section.classList.add('active-view');
+                    if (navBtn) navBtn.classList.add('active-tab');
+                } else {
+                    section.classList.remove('active-view');
+                    if (navBtn) navBtn.classList.remove('active-tab');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons();
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        /* =========================================================
+           2. 4 DYNAMIC ANIMATED THEMES & INTERACTIVE CANVAS
+           ========================================================= */
+        const canvas = document.getElementById('ambient-canvas');
+        const ctx = canvas.getContext('2d');
+        let orbs = [];
+        let stars = [];
+        let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        class SoftOrb {
+            constructor(i) {
+                this.index = i;
+                this.radius = Math.random() * 200 + 150;
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.x += (mouse.x - this.x) * 0.0007;
+                this.y += (mouse.y - this.y) * 0.0007;
+
+                if (this.x < -this.radius) this.x = canvas.width + this.radius;
+                if (this.x > canvas.width + this.radius) this.x = -this.radius;
+                if (this.y < -this.radius) this.y = canvas.height + this.radius;
+                if (this.y > canvas.height + this.radius) this.y = -this.radius;
+            }
+            draw(styles) {
+                const color = styles.getPropertyValue(`--orb-${(this.index % 3) + 1}`).trim() || 'rgba(20,184,166,0.25)';
+                const grad = ctx.createRadialGradient(this.x, this.y, 10, this.x, this.y, this.radius);
+                grad.addColorStop(0, color);
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.fill();
+            }
+        }
+
+        class FloatingSpark {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.4 + 0.8;
+                this.speedY = -(Math.random() * 0.35 + 0.1);
+                this.alpha = Math.random() * 0.7 + 0.2;
+            }
+            update() {
+                this.y += this.speedY;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw(particleColor) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = particleColor;
+                ctx.fill();
+            }
+        }
+
+        function initCanvasElements() {
+            orbs = Array.from({ length: 6 }, (_, i) => new SoftOrb(i));
+            stars = Array.from({ length: 38 }, () => new FloatingSpark());
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const styles = getComputedStyle(document.documentElement);
+            const particleColor = styles.getPropertyValue('--particle-color').trim() || 'rgba(13,148,136,0.4)';
+
+            orbs.forEach(o => { o.update(); o.draw(styles); });
+            stars.forEach(s => { s.update(); s.draw(particleColor); });
+            requestAnimationFrame(animateCanvas);
+        }
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            ['ocean', 'forest', 'night', 'sunset'].forEach(t => {
+                const btn = document.getElementById(`theme-btn-${t}`);
+                if (!btn) return;
+                if (t === themeName) {
+                    btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all bg-white shadow-sm text-slate-900';
+                } else {
+                    btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all opacity-70 hover:opacity-100';
+                }
+            });
+        }
+
+        /* =========================================================
+           3. 9 PSYCHOLOGY BRANCHES DATABASE & MODAL ENGINE
+           ========================================================= */
+        const conceptsData = {
+            anxiety: {
+                category: "clinical",
+                badge: "Эмнэлзүйн сэтгэл судлал",
+                title: "Сэтгэл түгшилт ба Хэт бодол (Anxiety)",
+                subtitle: "Тархины хэт идэвхжсэн хамгаалалтын дохиолол",
+                img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80",
+                short: "Ирээдүйд болоогүй эрсдэлээс таныг хамгаалах гэсэн тархины Амигдала хэсгийн хэт ачаалал.",
+                why: "Сэтгэл түгшилт нь таныг сул дорой болохоор үүсдэггүй. Харин тархины аюулыг мэдрэгч 'Амигдала' хэсэг ирээдүйн тодорхойгүй зүйлсийг бодит аюул мэт хүлээн авч, цусан дахь адреналин болон кортизолыг ихэсгэснээр зүрх дэлсэж, бодол тасралтгүй эргэлддэг.",
+                symptoms: [
+                    "Хамгийн муу хувилбарыг ургуулан бодох (Catastrophizing)",
+                    "Цээж давчдах, зүрх түргэн цохилох, нойр хулжих",
+                    "Төгс хийх гэж хэт хичээх эсвэл айснаасаа болж хойшлуулах",
+                    "Бие чангарч, мөр хүзүүгээр хөших"
+                ],
+                tips: [
+                    "Тайвшрах Лаборатори дахь 4-7-8 амьсгалын дасгалыг 4 удаа давтах.",
+                    "'Санаа зовох цаг' гаргах: Өдөрт 15 минутыг л санаа зовоход зориулж, бусад үед бодлоо хойшлуулах.",
+                    "Бодол бол факт биш гэдгийг өөртөө сануулах."
+                ]
+            },
+            attachment: {
+                category: "relationship",
+                badge: "Харилцааны сэтгэл судлал",
+                title: "Ээнэгшихүйн онол (Attachment Theory)",
+                subtitle: "Хайр дурлал ба дотно харилцааны 4 хэв маяг",
+                img: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=700&q=80",
+                short: "Хүүхэд ахуй насанд эцэг эхтэйгээ тогтоосон холбоо насанд хүрсэн үеийн хайр дурлалд хэрхэн нөлөөлдөг вэ?",
+                why: "Сэтгэл судлаач Жон Боулби болон Мэри Эйнсворт нарын нээсэн энэхүү онолоор хүүхэд ахуйд асран хамгаалагч нь хэр тогтвортой, дулаан байснаас шалтгаалан бидний тархинд 'Бусад хүнд итгэж болох уу?' гэдэг дотоод загвар бүрэлддэг.",
+                symptoms: [
+                    "Итгэлтэй (Secure): Дотносохоос айдаггүй, хил хязгаараа эрүүлээр илэрхийлдэг.",
+                    "Түгшүүртэй (Anxious): Хаягдахаас маш их айдаг, чат удаан ирэхгүй бол санаа зовдог.",
+                    "Зугтаах (Avoidant): Хэт дотносох үед амьсгал давчдах мэт санагдаж зай барьдаг.",
+                    "Айдастай-Зугтаах (Disorganized): Хайр хүсэвч ойртохоор шаналахаас айдаг."
+                ],
+                tips: [
+                    "'Сорил & Сонжоо' цэс рүү орж өөрийн ээнэгших хэв маягаа тодорхойлох.",
+                    "Ээнэгших хэв маяг бол насан туршийн ял биш — ухамсартайгаар 'Итгэлтэй' хэв маяг руу шилжиж болдог (Earned Security).",
+                    "Хамтрагчдаа өөрийнхөө хэрэгцээг буруутгалгүйгээр 'Би' өгүүлбэрээр илэрхийлж сурах."
+                ]
+            },
+            innerchild: {
+                category: "relationship",
+                badge: "Гүн сэтгэл засал",
+                title: "Дотоод хүүхэд ба Бага насны шарх",
+                subtitle: "Inner Child Healing & Reparenting",
+                img: "https://images.unsplash.com/photo-1489710437720-ebb67ec84dd2?auto=format&fit=crop&w=700&q=80",
+                short: "Бидний дотор орших багадаа сонсогдоогүй, айсан эсвэл хайр хүссэн бяцхан хүүхдийг эдгээх урлаг.",
+                why: "Бага насанд сэтгэл хөдлөлөө илэрхийлэхэд 'Битгий уйл', 'Чи том болсон' гэж хориглох эсвэл хайр халамж дутагдах үед тэрхүү мэдрэмж ухамсаргүй сэтгэлд хадгалагддаг. Насанд хүрсэн хойно жижиг зүйлд хэт гомдох, эсвэл бусдад таалагдах гэж өөрийгөө золиослох байдлаар илэрдэг.",
+                symptoms: [
+                    "Бусдын уур бухимдлаас хэт айж, өөрийгөө буруутай мэт мэдрэх",
+                    "Магтаал сонсохгүй бол өөрийгөө үнэ цэнгүй мэтээр мэдрэх",
+                    "Хэн нэгэн шүүмжлэхэд хүүхэд шиг гомдож хаалт тавих"
+                ],
+                tips: [
+                    "Өөрийгөө дахин хүмүүжүүлэх (Reparenting): Багадаа сонсохыг хүсдэг байсан дулаан үгээ одоо өөртөө хэлэх.",
+                    "Бага насны зургаа хараад 'Одоо би том болсон, би чамайг хамгаалж чадна' гэж захидал бичих."
+                ]
+            },
+            jung: {
+                category: "relationship",
+                badge: "Аналитик сэтгэл судлал",
+                title: "Карл Юнг: Сүүдэр би (Shadow Work)",
+                subtitle: "Өөрийнхөө нуугдмал талыг хүлээн зөвшөөрөх нь",
+                img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80",
+                short: "Нийгэмд таалагдахын тулд бидний нууж дарсан зан чанар, уур хилэн болон бүтээлч хүч.",
+                why: "Швейцарийн суут сэтгэл судлаач Карл Юнг хүний сэтгэлийг Нийгмийн баг (Persona) болон Сүүдэр (Shadow) гэж хуваасан. Бид 'сайн хүн' байхын тулд уур хилэн, атаархал, хувиа хичээх зан зэргээ гүн рүүгээ түлхдэг. Гэвч дарсан сүүдэр устахгүй бөгөөд бусдыг шүүмжлэх эсвэл гэнэтийн тэсрэлтээр гарч ирдэг.",
+                symptoms: [
+                    "Бусад хүний тодорхой нэг зан чанар таны дургүйг маш хүчтэй хүргэх (Тусгал буюу Projection)",
+                    "Байнга эелдэг байх гэж хичээвч дотроо их хорсол тээх",
+                    "Өөрийнхөө жинхэнэ хүсэл мөрөөдлийг илэрхийлэхээс ичих"
+                ],
+                tips: [
+                    "Надад хэний ямар зан хамгийн их таалагддаггүй вэ? Тэр зан миний дотор ямар хэлбэрээр нуугдаж байна вэ? гэж асуух.",
+                    "Өөрийнхөө 'муу' гэж боддог мэдрэмжийг шүүлгүйгээр тэмдэглэлийн дэвтэрт буулгах."
+                ]
+            },
+            burnout: {
+                category: "clinical",
+                badge: "Хөдөлмөр & Эрүүл мэнд",
+                title: "Сэтгэлийн туйлдал (Emotional Burnout)",
+                subtitle: "Дотоод батерей бүрэн дуусах хам шинж",
+                img: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=700&q=80",
+                short: "Амралтгүй зүтгэснээс үүсэх сэтгэл хөдлөлийн хөндийрөл ба архаг ядаргаа.",
+                why: "ДЭМБ-аас албан ёсоор тодорхойлсон энэхүү хам шинж нь удаан хугацааны архаг стрессийг зохицуулж чадаагүйгээс үүсдэг. Тархи хэт их ачааллаас өөрийгөө хамгаалахын тулд сэтгэл хөдлөлийг 'унтрааж' эхэлдэг.",
+                symptoms: [
+                    "Өглөө сэрэхэд л ядарсан байх",
+                    "Ажил болон хүмүүст хүйтэн хөндий, тоомжиргүй хандах (Cynicism)",
+                    "Хийж буй зүйл нь ямар ч үр дүнгүй мэт санагдах"
+                ],
+                tips: [
+                    "Идэвхгүй амралт (утас маажих) биш, идэвхтэй сэргээх амралт (байгальд алхах, бүтэн нойр авах) сонгох.",
+                    "Ажлын цаг дууссан бол ажлын чатаа хаах хатуу дүрэм тогтоох."
+                ]
+            },
+            cbt: {
+                category: "clinical",
+                badge: "Нотолгоонд суурилсан засал",
+                title: "Танин мэдэхүйн засал (CBT)",
+                subtitle: "Бодол → Мэдрэмж → Үйлдлийн гурвалжин",
+                img: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=700&q=80",
+                short: "Сөрөг бодлын гажуудлыг олж таних ба эрүүл бодлоор солих шинжлэх ухаан.",
+                why: "Аарон Бекийн үндэслэсэн CBT засал нь бидний сэтгэл санаагаар унах шалтгаан нь гадаад үйл явдал гэхээсээ илүү тархины 'Танин мэдэхүйн гажуудал' (Cognitive Distortions) болохыг баталсан.",
+                symptoms: [
+                    "Хар эсвэл Цагаан сэтгэлгээ: Нэг алдаа гаргавал 'Би бүтэлгүй хүн' гэж дүгнэх.",
+                    "Оюун санаа унших: 'Тэр над руу муухай харлаа, намайг үзэн ядаж байгаа байх' гэж таамаглах.",
+                    "Сэтгэл хөдлөлөөр нотлох: 'Надад айдас төрж байна, тиймээс муу зүйл болох нь гарцаагүй' гэж бодох."
+                ],
+                tips: [
+                    "Тайвшрах Лаборатори цэсэнд байгаа 'CBT Бодол Хувиргах Хүснэгт'-ийг ашиглаж үзэх.",
+                    "Сөрөг бодол орж ирмэгц 'Үүнийг батлах 100%-ийн баримт бий юу?' гэж шүүгч шиг асуух."
+                ]
+            },
+            neuro: {
+                category: "brain",
+                badge: "Тархи судлал",
+                title: "Нейропластик чанар (Neuroplasticity)",
+                subtitle: "Тархи насан туршдаа өөрчлөгдөж, шинэчлэгдэх чадвар",
+                img: "https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=700&q=80",
+                short: "Дадал зуршил, бодол болон бясалгалаар тархины нейроны замыг шинээр засах боломж.",
+                why: "Өмнө нь эрдэмтэд хүний тархи 25 наснаас хойш өөрчлөгддөггүй гэж үздэг байв. Харин орчин үеийн тархи судлал бид шинэ бодол дадуулах, талархах, бясалгах бүрт тархинд шинэ нейроны гүүр үүсэж, хуучин сөрөг зуршлын зам бүдгэрдэг болохыг тогтоосон.",
+                symptoms: [
+                    "Сөрөг зүйл бодох тусам тархи сөрөг зүйлийг илүү хурдан анзаардаг болох",
+                    "Шинэ дадал хэвшүүлэхэд эхний 21 хоног хамгийн их эсэргүүцэлтэй тулгарах"
+                ],
+                tips: [
+                    "Орой бүр унтахын өмнө өнөөдөр болсон 3 талархууштай зүйлийг бичиж тархины эерэг замыг өргөсгөх.",
+                    "Өглөө сэрээд эхний 30 минут утас шалгалгүй тархины допамины тэнцвэрийг хадгалах."
+                ]
+            },
+            compassion: {
+                category: "brain",
+                badge: "Эерэг сэтгэл судлал",
+                title: "Өөрийгөө энэрэхүй (Self-Compassion)",
+                subtitle: "Дотоод хатуу шүүмжлэгчээ дотны найзаар солих нь",
+                img: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=700&q=80",
+                short: "Алдаа гаргасан үедээ өөрийгөө шийтгэх биш, ойлгож дэмжих сэтгэлийн хүч.",
+                why: "Доктор Кристин Неффийн судалгаагаар өөрийгөө энэрэхүй нь: 1) Өөртөө эелдэг байх, 2) Зовлон бэрхшээл бол хүн бүрт тохиолддог нийтлэг зүйл гэдгийг санах, 3) Мэдрэмжээ хэтрүүлэлгүй анзаарах гэсэн 3 тулгууртай.",
+                symptoms: [
+                    "Бусдад маш уучламтгай мөртлөө өөрийнхөө жижиг алдааг огт уучилдаггүй байх",
+                    "Амжилтад хүрсэн ч 'Азаар л болчихлоо' гэж өөрийгөө үгүйсгэх"
+                ],
+                tips: [
+                    "Цээжин дээрээ гараа тавиад яг л хайртай дүүдээ хэлж буй мэт дулаан өнгөөр өөртэйгөө ярилцах."
+                ]
+            },
+            resilience: {
+                category: "brain",
+                badge: "Хувь хүний хөгжил",
+                title: "Сэтгэлийн хат ба Хил хязгаар (Boundaries)",
+                subtitle: "Салхинд бөхийвч хугардаггүй мод мэт уян хатан чанар",
+                img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=700&q=80",
+                short: "Амьдралын уналтын дараа эргэн сэргэх чадвар ба эрүүл хил хязгаар.",
+                why: "Сэтгэлийн хат гэдэг нь огт уйлахгүй, мэдрэмжгүй байхын нэр биш. Харин өвдөлтийг мэдэрч, түүнийгээ боловсруулаад, өөрийн үнэт зүйлдээ тулгуурлан урагшлах чадвар юм.",
+                symptoms: [
+                    "Бусдын сэтгэл санааны байдалд хэт автахгүй байх",
+                    "Хүсээгүй гуйлтад гэмшлийн мэдрэмжгүйгээр 'Үгүй' гэж хэлж чадах"
+                ],
+                tips: [
+                    "Стоик дасгал: Юмс үзэгдлийг 'Миний хянаж чадах' (миний үг, үйлдэл) болон 'Хянаж чадахгүй' (бусдын бодол, өнгөрсөн цаг) гэж 2 баганад хуваах."
+                ]
+            }
+        };
+
+        function renderBranchesGrid(filter = 'all') {
+            const grid = document.getElementById('branches-grid');
+            const keys = Object.keys(conceptsData).filter(k => filter === 'all' || conceptsData[k].category === filter);
+
+            grid.innerHTML = keys.map(key => {
+                const item = conceptsData[key];
+                return `
+                    <div onclick="openConceptModal('${key}')" class="glass-card hover-lift rounded-3xl overflow-hidden cursor-pointer group flex flex-col justify-between">
+                        <div>
+                            <div class="h-52 overflow-hidden relative">
+                                <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" onerror="this.src='https://placehold.co/700x500/0d9488/ffffff?text=Psychology'">
+                                <span class="absolute top-3.5 left-3.5 theme-badge px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md">${item.badge}</span>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-1 group-hover:opacity-80 transition">${item.title}</h3>
+                                <p class="text-[11px] uppercase tracking-wider opacity-60 mb-3">${item.subtitle}</p>
+                                <p class="text-sm theme-text-secondary leading-relaxed">${item.short}</p>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6 pt-2 flex items-center justify-between text-xs font-bold" style="color: var(--accent-primary);">
+                            <span>Дэлгэрэнгүй цонхоор унших</span>
+                            <span class="group-hover:translate-x-1 transition">→</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterBranches(cat) {
+            ['all', 'clinical', 'relationship', 'brain'].forEach(c => {
+                const btn = document.getElementById(`filter-${c}`);
+                if (!btn) return;
+                if (c === cat) {
+                    btn.className = 'px-4 py-2 rounded-xl text-xs font-bold theme-btn-primary';
+                } else {
+                    btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold glass-card';
+                }
+            });
+            renderBranchesGrid(cat);
+        }
+
+        function openConceptModal(key) {
+            const data = conceptsData[key];
+            if (!data) return;
+
+            document.getElementById('modal-tag').textContent = data.badge;
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-subtitle').textContent = data.subtitle;
+            document.getElementById('modal-why').textContent = data.why;
+            document.getElementById('modal-symptoms').innerHTML = data.symptoms.map(s => `<li>${s}</li>`).join('');
+            document.getElementById('modal-tips').innerHTML = data.tips.map(t => `<li>${t}</li>`).join('');
+
+            document.getElementById('concept-modal').classList.add('open');
+            lucide.createIcons();
+        }
+
+        function closeConceptModal() {
+            document.getElementById('concept-modal').classList.remove('open');
+        }
+
+        /* =========================================================
+           4. 3 INTERACTIVE PSYCHOLOGICAL TESTS ENGINE
+           ========================================================= */
+        const testsBank = {
+            balance: {
+                tag: "СОРИЛ #1 • СЭТГЭЛИЙН ТЭНЦВЭР",
+                title: "Сэтгэлийн Тэнцвэр ба Туйлдал (Burnout)",
+                questions: [
+                    { q: "1. Сүүлийн 7 хоногт та өглөө сэрэхдээ хэр амарсан мэдрэмжтэй сэрж байна вэ?", opts: [{t:"Эрч хүчтэй, сайн амарсан", s:3}, {t:"Дундаж, зарим өдөр нозоорсон", s:2}, {t:"Унтсан ч маш их ядарсан сэрдэг", s:1}] },
+                    { q: "2. Алдаа гаргах эсвэл ажил бүтэлгүйтэх үед та өөртөө хэрхэн ханддаг вэ?", opts: [{t:"Алдаанаасаа суралцаад өөрийгөө тайвшруулдаг", s:3}, {t:"Хэсэг бухимдаж санаа зовдог", s:2}, {t:"Өөрийгөө маш хатуу шүүмжилж шаналдаг", s:1}] },
+                    { q: "3. Өдрийн турш таны толгойд санаа зовоосон бодлууд хэр их эргэлддэг вэ?", opts: [{t:"Ховорхон, одоо цагтаа төвлөрдөг", s:3}, {t:"Ачаалал ихтэй үед заримдаа түгшдэг", s:2}, {t:"Зогсолтгүй олон зүйлд санаа зовдог", s:1}] },
+                    { q: "4. Танд сэтгэлээ уудлан ярилцах итгэлтэй хүн бий юу?", opts: [{t:"Тийм ээ, нээлттэй ярилцдаг хүмүүс бий", s:3}, {t:"Байгаа ч тэр бүр ярьж чаддаггүй", s:2}, {t:"Бүх зүйлээ ганцаараа дотроо хадгалдаг", s:1}] },
+                    { q: "5. Өдөрт зөвхөн өөртөө зориулж тайван цаг гаргаж чаддаг уу?", opts: [{t:"Өдөр бүр өөртөө цаг гаргадаг", s:3}, {t:"Амралтын өдрөөр л хааяа амждаг", s:2}, {t:"Огт амждаггүй, байнга яарч явдаг", s:1}] }
+                ],
+                evaluate: (score) => {
+                    if (score >= 13) return { tag: "Тэнцвэртэй", title: "Таны сэтгэл зүйн дархлаа маш сайн байна 🌿", desc: "Та өөрийнхөө мэдрэмжийг сонсож, амралт болон ажлын хэмнэлээ эрүүлээр зохицуулж чадаж байна.", recs: ["Өдөр тутмын талархлын дадлаа үргэлжлүүлэх", "Эргэн тойрныхондоо эерэг дэмжлэг түгээх"] };
+                    if (score >= 9) return { tag: "Дунд зэргийн ядаргаа", title: "Танд амралт болон өөртөө анхаарах цаг хэрэгтэй байна 🌤️", desc: "Та бусдын төлөө болон үүрэг хариуцлагын төлөө хичээж яваа ч дотоод батерей тань дундарч эхэлжээ.", recs: ["Унтахаас 1 цагийн өмнө гар утаснаас холдох", "Тайвшрах Лабораторийн 4-7-8 амьсгалыг өдөр бүр хийх"] };
+                    return { tag: "Туйлдал үүссэн", title: "Таны сэтгэл зүй маш их ядарсан байна 🌧️", desc: "Та хэтэрхий удаан хугацаанд их ачааллыг ганцаараа үүрчээ. Яг одоо өөрийгөө нэгдүгээрт тавих цаг болсон.", recs: ["Яаралтай бус ажлуудыг хойшлуулж бүтэн амрах", "Мэргэжлийн сэтгэл зүйчтэй ярилцаж ачааллаа хуваалцах"] };
+                }
+            },
+            attachment: {
+                tag: "СОРИЛ #2 • ХАРИЛЦААНЫ СЭТГЭЛ ЗҮЙ",
+                title: "Ээнэгшихүйн Хэв Маяг (Attachment Style)",
+                questions: [
+                    { q: "1. Хайртай хүн эсвэл дотны найз тань чат уншсан мөртлөө хэдэн цаг хариу бичихгүй бол та яадаг вэ?", opts: [{t:"Ажилтай байгаа байх гэж тайван хүлээдэг", s:3}, {t:"Надад уурласан юм болов уу гэж түгшдэг", s:2}, {t:"Надад ч бас хамаагүй гэж бодоод зай барьдаг", s:1}] },
+                    { q: "2. Хэн нэгэн тантай сэтгэл зүйн хувьд маш дотносож эхлэхэд танд ямар мэдрэмж төрдөг вэ?", opts: [{t:"Дулаан, аюулгүй сайхан санагддаг", s:3}, {t:"Намайг орхиод явчих вий гэж айдаг", s:2}, {t:"Эрх чөлөөг минь боомилох гээд байгаа мэт тухгүй санагддаг", s:1}] },
+                    { q: "3. Харилцаанд үл ойлголцол үүсэх үед та ямар хариу үйлдэл үзүүлдэг вэ?", opts: [{t:"Тайвширч байгаад нээлттэй ярилцаж шийддэг", s:3}, {t:"Тэр дороо учрыг нь олох гэж сэтгэл хөдлөлөөр шахдаг", s:2}, {t:"Дуугаа хурааж, ганцаараа байхыг илүүд үздэг", s:1}] },
+                    { q: "4. Та бусдаас тусламж гуйх эсвэл сул талаа харуулахад хэр нээлттэй вэ?", opts: [{t:"Хэрэгтэй үедээ санаа зоволгүй тусламж хүсдэг", s:3}, {t:"Намайг төвөгшөөх болов уу гэж эргэлздэг", s:2}, {t:"Зөвхөн өөртөө л найдах ёстой гэж боддог", s:1}] },
+                    { q: "5. Хайр дурлалын харилцаанд таны хамгийн том айдас юу вэ?", opts: [{t:"Бие биенээ хүндлэхээ болих вий гэдэгт анхаардаг", s:3}, {t:"Ганцаараа хаягдаж үлдэхээс хамгийн их айдаг", s:2}, {t:"Өөрийнхөө бие даасан байдлыг алдахаас айдаг", s:1}] }
+                ],
+                evaluate: (score) => {
+                    if (score >= 13) return { tag: "Итгэлтэй хэв маяг (Secure)", title: "Та Итгэлтэй (Secure) ээнэгших хэв маягтай байна 💚", desc: "Та бусадтай дотносохоос айдаггүй бөгөөд өөрийн болон бусдын орон зайг эрүүлээр хүндэтгэж чаддаг.", recs: ["Хамтрагчийнхаа сэтгэл зүйн онцлогийг үргэлжлүүлэн ойлгож дэмжих", "Нээлттэй харилцааны соёлоо хадгалах"] };
+                    if (score >= 9) return { tag: "Түгшүүртэй хэв маяг (Anxious)", title: "Та Түгшүүртэй (Anxious) ээнэгших хандлагатай байна 🌊", desc: "Та маш халамжтай, үнэнч хүн боловч хаягдах эсвэл хайрлагдахгүй байхаас их түгшдэг. Бусдын зан аашийн өөрчлөлтийг хэт мэдрэмтгий хүлээж авдаг.", recs: ["Хамтрагчийнхаа чимээгүй байдлыг өөрийнхөө эсрэг гэж шууд дүгнэхгүй байх", "Өөрийнхөө үнэ цэнийг бусдын хариу үйлдлээс ангид байлгах дасгал хийх"] };
+                    return { tag: "Зугтаах хэв маяг (Avoidant)", title: "Та Зугтаах (Avoidant) буюу Бие даасан хэв маягтай байна 🛡️", desc: "Та бие даасан байдлыг эрхэмлэдэг ч хэт дотносох үед өөрийгөө хамгаалах үүднээс сэтгэл зүйн хана босгодог хандлагатай байна.", recs: ["Дотносох нь эрх чөлөөгөө алдах биш гэдгийг анзаарах", "Жижиг алхмаар өөрийн мэдрэмжээ итгэлтэй хүндээ хуваалцаж сурах"] };
+                }
+            },
+            eq: {
+                tag: "СОРИЛ #3 • СЭТГЭЛ ХӨДЛӨЛИЙН ЧАДАМЖ",
+                title: "Сэтгэл Хөдлөлийн Оюун Ухаан (EQ)",
+                questions: [
+                    { q: "1. Та уурлах эсвэл гомдох үедээ яг ямар мэдрэмж төрж байгааг шууд нэрлэж чаддаг уу?", opts: [{t:"Тийм ээ, шалтгаантай нь тодорхой анзаардаг", s:3}, {t:"Заримдаа хэсэг хугацааны дараа л ойлгодог", s:2}, {t:"Ихэвчлэн юу болоод байгааг мэдэлгүй тэсэрдэг", s:1}] },
+                    { q: "2. Өөр хүн таны хажууд гунигтай эсвэл тавгүй байвал та хэр хурдан анзаардаг вэ?", opts: [{t:"Дууны өнгө, харцнаас нь шууд мэдэрдэг", s:3}, {t:"Өөрөө хэлбэл л анзаарч дэмждэг", s:2}, {t:"Тэр бүр анзаардаггүй эсвэл яахаа мэддэггүй", s:1}] },
+                    { q: "3. Хэн нэгэн таныг шударга бусаар шүүмжлэхэд та яадаг вэ?", opts: [{t:"Амьсгал аваад тайвнаар баримттай хариулдаг", s:3}, {t:"Дотроо их бухимдаж өдөржин боддог", s:2}, {t:"Шууд маргалдаж эсвэл харилцаагаа тасалдаг", s:1}] },
+                    { q: "4. Та бусдын байр сууринаас асуудлыг харахдаа хэр уян хатан бэ?", opts: [{t:"Ямар ч хүний өнцгийг ойлгохыг хичээдэг", s:3}, {t:"Зөвхөн ойр дотны хүмүүсээ л ойлгодог", s:2}, {t:"Миний зөв гэдэгтээ хатуу зогсдог", s:1}] },
+                    { q: "5. Сэтгэл санаа тавгүй үедээ өөрийгөө хэрхэн тайвшруулдаг вэ?", opts: [{t:"Амьсгал, алхалт, тэмдэглэл зэрэг эрүүл аргатай", s:3}, {t:"Утас маажиж эсвэл унтаж мартахыг боддог", s:2}, {t:"Тайвширч чадахгүй удаан шаналдаг", s:1}] }
+                ],
+                evaluate: (score) => {
+                    if (score >= 13) return { tag: "Өндөр EQ", title: "Таны Сэтгэл Хөдлөлийн Оюун Ухаан өндөр түвшинд байна ✨", desc: "Та өөрийнхөө мэдрэмжийг удирдаж, бусдыг чин сэтгэлээсээ ойлгон сонсох (Эмпати) өндөр чадвартай байна.", recs: ["Манлайлал болон бусдад зөвлөн туслах чадвараа хөгжүүлэх", "Бусдын сэтгэл хөдлөлийг хэт өөр дээрээ үүрэхээс сэргийлэх"] };
+                    if (score >= 9) return { tag: "Хөгжиж буй EQ", title: "Таны EQ дундаж бөгөөд өсөх бүрэн боломжтой 🌱", desc: "Та тайван үедээ бусдыг сайн ойлгодог ч стресс ихтэй үед сэтгэл хөдлөлдөө хөтлөгдөх тохиолдол гардаг.", recs: ["Хариу үйлдэл үзүүлэхийн өмнө 6 секунд хүлээх дадал хэвшүүлэх", "Мэдрэмжийн үгийн сангаа баяжуулах"] };
+                    return { tag: "Анхаарах EQ", title: "Өөрийнхөө мэдрэмжтэй танилцах дасгал хэрэгтэй байна 🧭", desc: "Сэтгэл хөдлөлөө удаан дарж явснаас гэнэт тэсрэх эсвэл бусдад ойлгуулахад бэрхшээл үүсэж байна.", recs: ["Өдөр бүр 'Яг одоо би юу мэдэрч байна вэ?' гэж 3 удаа өөрөөсөө асуух", "CBT бодол задлах дасгалыг ашиглах"] };
+                }
+            }
+        };
+
+        let activeTestKey = 'balance';
+        let currentQuizIndex = 0;
+        let totalQuizScore = 0;
+
+        function selectTest(testKey) {
+            activeTestKey = testKey;
+            ['balance', 'attachment', 'eq'].forEach(k => {
+                const tab = document.getElementById(`test-tab-${k}`);
+                if (k === testKey) {
+                    tab.classList.add('border-teal-500');
+                    tab.classList.remove('border-transparent');
+                } else {
+                    tab.classList.remove('border-teal-500');
+                    tab.classList.add('border-transparent');
+                }
+            });
+            resetQuiz();
+        }
+
+        function renderQuizQuestion() {
+            const test = testsBank[activeTestKey];
+            const item = test.questions[currentQuizIndex];
+
+            document.getElementById('active-test-category').textContent = test.tag;
+            document.getElementById('active-test-title').textContent = test.title;
+            document.getElementById('quiz-progress-badge').textContent = `Асуулт ${currentQuizIndex + 1} / ${test.questions.length}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQuizIndex + 1) / test.questions.length) * 100}%`;
+            document.getElementById('quiz-question-text').textContent = item.q;
+
+            document.getElementById('quiz-options').innerHTML = item.opts.map(opt => `
+                <button onclick="answerQuiz(${opt.s})" class="w-full text-left p-4 rounded-2xl bg-black/5 hover:bg-teal-500/15 border border-transparent hover:border-teal-500/40 transition flex items-center justify-between group">
+                    <span class="text-sm sm:text-base font-medium">${opt.t}</span>
+                    <span class="w-7 h-7 rounded-full border border-current/30 flex items-center justify-center text-xs group-hover:bg-teal-600 group-hover:text-white transition">→</span>
+                </button>
+            `).join('');
+        }
+
+        function answerQuiz(score) {
+            totalQuizScore += score;
+            currentQuizIndex++;
+            const test = testsBank[activeTestKey];
+            if (currentQuizIndex < test.questions.length) {
+                renderQuizQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const resBox = document.getElementById('quiz-result');
+            resBox.classList.remove('hidden');
+
+            const evaluation = testsBank[activeTestKey].evaluate(totalQuizScore);
+            document.getElementById('quiz-score-tag').textContent = evaluation.tag;
+            document.getElementById('quiz-result-title').textContent = evaluation.title;
+            document.getElementById('quiz-result-desc').textContent = evaluation.desc;
+            document.getElementById('quiz-recommendations').innerHTML = evaluation.recs.map(r => `<li>${r}</li>`).join('');
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            totalQuizScore = 0;
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+
+        /* =========================================================
+           5. LAB TOOLS: BREATHING, 5-4-3-2-1 GROUNDING, CBT, WORRY BOX
+           ========================================================= */
+        let breathingActive = false;
+        let breathInterval = null;
+        let breathCycle = 0;
+
+        function toggleBreathing() {
+            const btnText = document.getElementById('breath-btn-text');
+            const circle = document.getElementById('breath-circle');
+            const label = document.getElementById('breath-status-label');
+            const timerNum = document.getElementById('breath-timer-num');
+
+            if (breathingActive) {
+                clearInterval(breathInterval);
+                breathingActive = false;
+                btnText.textContent = "Амьсгал эхлүүлэх";
+                circle.style.transform = "scale(1)";
+                label.textContent = "Зогссон";
+                timerNum.textContent = "•••";
+                return;
+            }
+            breathingActive = true;
+            breathCycle = 0;
+            btnText.textContent = "Зогсоох";
+            runBreathingCycle();
+        }
+
+        function runBreathingCycle() {
+            const circle = document.getElementById('breath-circle');
+            const outerRing = document.getElementById('breath-outer-ring');
+            const label = document.getElementById('breath-status-label');
+            const timerNum = document.getElementById('breath-timer-num');
+            const counter = document.getElementById('breath-cycle-counter');
+
+            let phase = 'inhale';
+            let secondsLeft = 4;
+            updatePhase('Амьсгаа авна уу...', 4, 1.42);
+
+            breathInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    timerNum.textContent = secondsLeft + "с";
+                } else {
+                    if (phase === 'inhale') {
+                        phase = 'hold'; secondsLeft = 7;
+                        updatePhase('Түгжинэ үү...', 7, 1.42);
+                    } else if (phase === 'hold') {
+                        phase = 'exhale'; secondsLeft = 8;
+                        updatePhase('Зөөлөн гаргана уу...', 8, 1.0);
+                    } else {
+                        breathCycle++;
+                        counter.textContent = `Давталт: ${breathCycle} / 4`;
+                        if (breathCycle >= 4) {
+                            clearInterval(breathInterval);
+                            breathingActive = false;
+                            document.getElementById('breath-btn-text').textContent = "Дахин эхлүүлэх";
+                            label.textContent = "Тайвширлаа 🌿";
+                            timerNum.textContent = "✓";
+                            return;
+                        }
+                        phase = 'inhale'; secondsLeft = 4;
+                        updatePhase('Амьсгаа авна уу...', 4, 1.42);
+                    }
+                }
+            }, 1000);
+
+            function updatePhase(text, dur, scale) {
+                label.textContent = text;
+                timerNum.textContent = dur + "с";
+                circle.style.transition = `transform ${dur}s ease-in-out`;
+                outerRing.style.transition = `transform ${dur}s ease-in-out`;
+                circle.style.transform = `scale(${scale})`;
+                outerRing.style.transform = `scale(${scale > 1 ? 1.12 : 1})`;
+            }
+        }
+
+        // 5-4-3-2-1 Grounding Stepper
+        const groundingSteps = [
+            { badge: "Алхам 1 / 5", emoji: "👀", title: "Эргэн тойрноосоо ХАРЖ буй 5 зүйлийг нэрлэ:", desc: "Жижиг эд зүйлс, гэрэл сүүдэр, өнгө зэргийг анзаар.", ph: "Жишээ нь: Аяга, цонх, ном..." },
+            { badge: "Алхам 2 / 5", emoji: "✋", title: "Биеэрээ ХҮРЧ мэдэрч болох 4 зүйлийг анзаар:", desc: "Хувцасны зөөлөн гадаргуу, ширээний сэрүүн тавцан, шаланд хүрч буй хөл...", ph: "Жишээ нь: Цамцны ханцуй, сандал..." },
+            { badge: "Алхам 3 / 5", emoji: "👂", title: "Яг одоо СОНСОГДОЖ буй 3 чимээг чагна:", desc: "Алсын машины чимээ, салхи, өөрийн амьсгал...", ph: "Жишээ нь: Цагны цохилт, салхи..." },
+            { badge: "Алхам 4 / 5", emoji: "🌸", title: "ҮНЭРТЭЖ буй 2 зүйлийг анзаар:", desc: "Кофе, цай, өрөөний агаар эсвэл дуртай үнэрээ төсөөл.", ph: "Жишээ нь: Цайны үнэр, цэвэр агаар..." },
+            { badge: "Алхам 5 / 5", emoji: "💚", title: "Өөртөө ТАЛАРХАЖ буй 1 зүйлийг хэл:", desc: "Та одоо цагтаа бүрэн эргэн ирлээ. Гүнзгий амьсгал аваарай.", ph: "Жишээ нь: Өнөөдөр өөртөө цаг гаргасандаа талархая..." }
+        ];
+        let gStepIndex = 0;
+
+        function nextGroundingStep() {
+            gStepIndex = (gStepIndex + 1) % groundingSteps.length;
+            renderGroundingStep();
+        }
+        function resetGrounding() {
+            gStepIndex = 0;
+            renderGroundingStep();
+        }
+        function renderGroundingStep() {
+            const s = groundingSteps[gStepIndex];
+            document.getElementById('grounding-badge').textContent = s.badge;
+            document.getElementById('grounding-emoji').textContent = s.emoji;
+            document.getElementById('grounding-title').textContent = s.title;
+            document.getElementById('grounding-desc').textContent = s.desc;
+            const inp = document.getElementById('grounding-input');
+            inp.value = '';
+            inp.placeholder = s.ph;
+            document.getElementById('grounding-btn-text').textContent = gStepIndex === 4 ? "Дуусгаад эхнээс нь" : "Дараагийн мэдрэхүй";
+        }
+
+        // CBT Reframing Examples
+        const cbtExamples = [
+            { neg: "Би энэ төсөл дээр жижиг алдаа гаргачихлаа, би үнэхээр чадваргүй хүн юм.", ev: "Би өмнөх 10 ажлыг амжилттай нугалсан. Алдаа гаргадаггүй хүн гэж байхгүй.", bal: "Нэг алдаа миний бүх чадварыг үгүйсгэхгүй. Би үүнийг засаад туршлага болгож авна." },
+            { neg: "Найз маань над руу залгасангүй, намайг тоохоо больсон байна.", ev: "Тэр сүүлийн үед ажил ихтэй байгаагаа хэлж байсан. Өмнө нь бид сайхан ярилцсан.", bal: "Завгүй байх нь намайг үл тоосон гэсэн үг биш. Би өөрөө түрүүлээд мэндийг нь асууж болно." },
+            { neg: "Ирээдүйд бүх зүйл улам хэцүү болно, би даван туулж чадахгүй.", ev: "Өнгөрсөн хугацаанд ч надад хэцүү үеүд байсан бөгөөд би бүгдийг нь даваад гарсан.", bal: "Ирээдүйг 100% мэдэх боломжгүй ч надад асуудлыг алхам алхмаар шийдэх чадвар бий." }
+        ];
+        function loadCBTExample(idx) {
+            const ex = cbtExamples[idx];
+            document.getElementById('cbt-negative').value = ex.neg;
+            document.getElementById('cbt-evidence').value = ex.ev;
+            document.getElementById('cbt-balanced').value = ex.bal;
+            const toast = document.getElementById('cbt-saved-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        // Worry Release & Affirmations
+        function releaseWorry() {
+            const input = document.getElementById('worry-input');
+            const wrapper = document.getElementById('worry-box-wrapper');
+            const msg = document.getElementById('worry-released-msg');
+            if (!input.value.trim()) { input.focus(); return; }
+
+            wrapper.classList.add('release-anim');
+            setTimeout(() => {
+                wrapper.classList.add('hidden');
+                wrapper.classList.remove('release-anim');
+                input.value = '';
+                msg.classList.remove('hidden');
+                setTimeout(() => {
+                    msg.classList.add('hidden');
+                    wrapper.classList.remove('hidden');
+                }, 3800);
+            }, 1250);
+        }
+
+        const affirmations = [
+            "\"Би төгс байх албагүй ч, өөрийгөө хайрлах бүрэн эрхтэй.\"",
+            "\"Миний мэдэрч буй бүх мэдрэмж зөв. Энэ хүнд үе ч бас өнгөрнө.\"",
+            "\"Амрах гэдэг бол цаг алдаж буй хэрэг биш, өөрийгөө эдгээж буй ухаалаг алхам.\"",
+            "\"Би бусдын хүлээлтэд нийцэх гэж биш, өөрийн үнэ цэнээр амьдрах эрхтэй.\""
+        ];
+        let affIndex = 0;
+        function nextAffirmation() {
+            affIndex = (affIndex + 1) % affirmations.length;
+            document.getElementById('affirmation-text').textContent = affirmations[affIndex];
+        }
+
+        /* =========================================================
+           6. QUICK MOOD, READING MODALS & BOOKING MODALS
+           ========================================================= */
+        const moodResponses = {
+            peaceful: "Тайван амгалан байгаа тань гайхалтай! Энэ тайван мөчөө ашиглан 'Салбар мэдлэг' цэснээс сонирхолтой сэдэв уншаарай.",
+            anxious: "Сэтгэл түгшиж байвал мөрөө суллаад уртаар амьсгал гаргаарай. 'Тайвшрах Лаб' руу орж 5-4-3-2-1 газардуулга хийж үзнэ үү.",
+            tired: "Та маш их хичээсэн байна. Ядрах бол таны бие амралт хүсэж буйн энгийн дохио юм. Өнөөдөр өөрийгөө шүүмжлэлгүй амраагаарай.",
+            lonely: "Ганцаардах мэдрэмж хүн бүрт төрдөг. Та ганцаараа биш шүү. 'Кейс & Номын сан' хэсгээс бусдын бодит түүхийг уншаарай.",
+            inspired: "Урам зориг дүүрэн байгаа дээрээ 'Сорил & Сонжоо' цэс рүү орж өөрийнхөө EQ болон Ээнэгших хэв маягийг сориорой!"
+        };
+
+        function selectQuickMood(key) {
+            document.getElementById('quick-mood-text').textContent = moodResponses[key];
+            document.getElementById('quick-mood-response').classList.remove('hidden');
+        }
+
+        const readingArticles = {
+            neuroplasticity: {
+                tag: "Онцлох нийтлэл • Тархи судлал",
+                title: "Тархины уян хатан чанар (Neuroplasticity): Бид өөрийгөө шинээр бүтээж чадах уу?",
+                body: `
+                    <p>Хүний тархинд ойролцоогоор 86 тэрбум нейрон байдаг. Бид ямар нэгэн бодлыг давтан бодох бүрт тэдгээр нейронууд хоорондоо цахилгаан дохиогоор холбогдож, яг л ойд олон алхсаар жим гардаг шиг бат бөх зам үүсгэдэг.</p>
+                    <p>Хэрэв та олон жил өөрийгөө шүүмжилж, санаа зовж ирсэн бол тэр зам өргөн зам болсон гэсэн үг. Гэхдээ гайхалтай мэдээ нь: Та өнөөдрөөс эхлэн өөртөө урмын үг хэлж, сөрөг бодлоо CBT аргаар засаж эхэлбэл тархи шинэ зам гаргаж, хуучин сөрөг зам аажмаар өвсөнд дарагдан бүдгэрдэг.</p>
+                `
+            },
+            case1: {
+                tag: "Кейс #1 • Сэтгэл зүйн хил хязгаар",
+                title: "Анугийн түүх: Бусдад таалагдах гэж өөрийгөө мартсан нь (People Pleasing)",
+                body: `
+                    <p><strong>Нөхцөл байдал:</strong> 27 настай Ану ажил дээрээ хэний ч гуйлтад "Үгүй" гэж хэлж чаддаггүй. Орой бүр илүү цагаар сууж бусдын ажлыг хийсээр нойргүйдэл болон сэтгэлийн туйлдалд орсон.</p>
+                    <p><strong>Сэтгэл судлаачийн тайлбар:</strong> Бусдад таалагдах хэт хичээл зүтгэл (Fawn response) нь ихэвчлэн бага насанд эцэг эхийнхээ сэтгэл санааг тааруулж, зөвхөн "сайн охин/хүү" байснаар л хайрлагддаг байснаас үүсдэг хамгаалалтын механизм юм.</p>
+                    <p><strong>Шийдэл:</strong> Ану шууд "Үгүй" гэж хэлж чадахгүй байсан тул эхлээд "Би хуваариа шалгаж үзээд хариу хэлье" гэж хугацаа хожих дасгал хийж, аажмаар өөрийнхөө эрүүл хил хязгаарыг тогтоож сурсан.</p>
+                `
+            },
+            case2: {
+                tag: "Кейс #2 • Өөрийн үнэлэмж",
+                title: "Төгөлдөрийн түүх: Хуурамч дүрийн хам шинж (Impostor Syndrome)",
+                body: `
+                    <p><strong>Нөхцөл байдал:</strong> Программ хангамжийн инженер Төгөлдөр ахлах инженер болсон ч баярлахын оронд "Намайг санамсаргүй сонгочихлоо, удахгүй миний чадваргүйг бүгд мэднэ" гэсэн айдаст автсан.</p>
+                    <p><strong>Сэтгэл судлаачийн тайлбар:</strong> Судалгаагаар хүмүүсийн 70% нь амьдралдаа дор хаяж нэг удаа энэ хам шинжийг мэдэрдэг. Хамгийн хачирхалтай нь чадвартай, хариуцлагатай хүмүүст илүү хүчтэй илэрдэг.</p>
+                    <p><strong>Шийдэл:</strong> Төгөлдөр өөрийн бодит хийсэн ажлууд болон авсан үнэлгээгээ цаасан дээр жагсаан бичиж, мэдрэмж болон бодит баримт хоёрыг ялгаж сурснаар түгшүүр нь 60%-иар буурсан.</p>
+                `
+            },
+            case3: {
+                tag: "Кейс #3 • Хосын харилцаа",
+                title: "Хөөцөлдөгч ба Зугтагч хоёрын тойрог (Anxious-Avoidant Trap)",
+                body: `
+                    <p><strong>Нөхцөл байдал:</strong> Маргаан гарах бүрт эхнэр нь тэр дороо ярилцаж шийдэхийг шаарддаг (Түгшүүртэй хэв маяг), харин нөхөр нь өрөөнөөс гарч дуугаа хураадаг (Зугтаах хэв маяг).</p>
+                    <p><strong>Шийдэл:</strong> Хосууд "Тайвшрах 30 минутын дүрэм" тохирсон. Нөхөр нь чимээгүй алга болохын оронд "Би чамд хайртай, гэхдээ одоо 30 минут тайвширчихаад эргэж ирээд ярилцъя" гэж хэлснээр эхнэрийн хаягдах айдас намжиж, нөхөрт ч орон зай гарсан.</p>
+                `
+            }
+        };
+
+        function openReadingModal(key) {
+            const art = readingArticles[key];
+            if (!art) return;
+            document.getElementById('reading-tag').textContent = art.tag;
+            document.getElementById('reading-title').textContent = art.title;
+            document.getElementById('reading-body').innerHTML = art.body;
+            document.getElementById('reading-modal').classList.add('open');
+        }
+        function closeReadingModal() {
+            document.getElementById('reading-modal').classList.remove('open');
+        }
+
+        function openBookingModal(psychName) {
+            document.getElementById('booking-psych-name').textContent = psychName;
+            document.getElementById('booking-form-box').classList.remove('hidden');
+            document.getElementById('booking-success-box').classList.add('hidden');
+            document.getElementById('booking-modal').classList.add('open');
+            lucide.createIcons();
+        }
+        function closeBookingModal() {
+            document.getElementById('booking-modal').classList.remove('open');
+        }
+        function submitBooking() {
+            document.getElementById('booking-form-box').classList.add('hidden');
+            document.getElementById('booking-success-box').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function toggleVSCodeModal(show) {
+            const modal = document.getElementById('vscode-modal');
+            if (show) modal.classList.add('open');
+            else modal.classList.remove('open');
+        }
+
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletter-email');
+            if (!email.value.trim()) { email.focus(); return; }
+            email.value = '';
+            const toast = document.getElementById('newsletter-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3500);
+        }
+
+        window.onload = function () {
+            initCanvasElements();
+            animateCanvas();
+            renderBranchesGrid('all');
+            renderQuizQuestion();
+            renderGroundingStep();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
